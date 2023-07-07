@@ -9,7 +9,7 @@ if [ -z "$1" ]
     VERSION=$1
 fi
 
-IMAGE_NAME=csconnect/cs-data-provider:$VERSION
+IMAGE_NAME=ccdata/cc-data-provider:$VERSION
 
 echo "Removing old $IMAGE_NAME image"
 docker rmi "$IMAGE_NAME"

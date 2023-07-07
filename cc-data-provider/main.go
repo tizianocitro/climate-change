@@ -13,6 +13,7 @@ import (
 	"github.com/tizianocitro/climate-change/cc-data-provider/config"
 	"github.com/tizianocitro/climate-change/cc-data-provider/config/db"
 	"github.com/tizianocitro/climate-change/cc-data-provider/repository"
+	"github.com/tizianocitro/climate-change/cc-data-provider/route"
 )
 
 func main() {

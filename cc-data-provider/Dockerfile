@@ -6,14 +6,14 @@ COPY go.sum ./
 RUN go mod download
 
 COPY . .
-RUN go build -o /csa-server
+RUN go build -o /cc-data-provider
 
 FROM golang:1.16-alpine AS run
 WORKDIR /app
 
-COPY --from=build /csa-server /csa-server
+COPY --from=build /cc-data-provider /cc-data-provider
 COPY .env .env
 
 EXPOSE 3000
 
-CMD [ "/csa-server" ]
+CMD [ "/cc-data-provider" ]
