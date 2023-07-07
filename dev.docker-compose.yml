@@ -49,7 +49,7 @@ services:
       - mattermost
   cc-data-provider:
     container_name: cc-data-provider
-    image: "ccdata/cs-data-provider"
+    image: "ccdata/cc-data-provider"
     restart: "unless-stopped"
     depends_on:
       - "db"
