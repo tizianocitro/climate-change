@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PLUGIN_NAME=cc-data
+PLUGIN_NAME=climate-change-data
 CONTAINER_NAME=cs-connect-base
 
 echo "Stopping containers if running..."
