@@ -7,161 +7,28 @@ organizations:
     sections:
       - name: Ecosystem Issues
         id: "0"
-        url: http://localhost:3000/cs-data-provider/issues
+        url: http://localhost:3000/cc-data-provider/issues
         widgets:
           - type: channel
-  - name: Demo CS-AWARE EU
-    id: "4"
-    description: The organization at https://demo.cs-aware.eu/index.html
-    sections:
-      - name: Incidents
-        id: "13"
-        url: http://localhost:3000/cs-data-provider/organizations/4/incidents
-        widgets:
-          - name: Description
-            type: text-box
-            url: http://localhost:3000/cs-data-provider/organizations/4/incidents/:id/text_box
-          - name: System
-            type: graph
-            url: http://localhost:3000/cs-data-provider/organizations/4/incidents/:id/graph
-          - name: History
-            type: table
-            url: http://localhost:3000/cs-data-provider/organizations/4/incidents/:id/table
-          - type: channel
-      - name: Policies
-        id: "14"
-        url: http://localhost:3000/cs-data-provider/organizations/4/policies
-        widgets:
-          - name: Dos
-            type: list
-            url: http://localhost:3000/cs-data-provider/organizations/4/policies/:id/dos
-          - name: Don'ts
-            type: list
-            url: http://localhost:3000/cs-data-provider/organizations/4/policies/:id/donts
-          - type: channel
-      - name: Stories
-        id: "15"
-        internal: true
-        url: http://localhost:3000/cs-data-provider/organizations/4/stories
-        widgets:
-          - name: Events
-            type: timeline
-            url: http://localhost:3000/cs-data-provider/organizations/4/stories/:id/timeline
-          - type: channel
-  - name: Organization X
+  - name: IMF Climate Data
     id: "1"
-    description: This is the X organization
+    description: The organization at https://climatedata.imf.org/pages/climatechange-data
     sections:
-      - name: Incidents
-        id: "3"
-        url: http://localhost:3000/cs-data-provider/organizations/1/incidents
-        widgets:
-          - name: Description
-            type: text-box
-            url: http://localhost:3000/cs-data-provider/organizations/1/incidents/:id/text_box
-          - name: System
-            type: graph
-            url: http://localhost:3000/cs-data-provider/organizations/1/incidents/:id/graph
-          - name: Observed Data
-            type: table
-            url: http://localhost:3000/cs-data-provider/organizations/1/incidents/:id/table
-          - type: channel
-      - name: Policies
-        id: "4"
-        url: http://localhost:3000/cs-data-provider/organizations/1/policies
-        widgets:
-          - name: Dos
-            type: list
-            url: http://localhost:3000/cs-data-provider/organizations/1/policies/:id/dos
-          - name: Don'ts
-            type: list
-            url: http://localhost:3000/cs-data-provider/organizations/1/policies/:id/donts
-          - type: channel
-      - name: Stories
-        id: "5"
-        internal: true
-        url: http://localhost:3000/cs-data-provider/organizations/1/stories
-        widgets:
-          - name: Events
-            type: timeline
-            url: http://localhost:3000/cs-data-provider/organizations/1/stories/:id/timeline
-          - type: channel
-    widgets: []
-  - name: Organization Y
-    id: "2"
-    description: This is the Y organization
-    sections:
-      - name: Incidents
-        id: "6"
-        url: http://localhost:3000/cs-data-provider/organizations/2/incidents
-        widgets:
-          - name: Description
-            type: text-box
-            url: http://localhost:3000/cs-data-provider/organizations/2/incidents/:id/text_box
-          - name: System
-            type: graph
-            url: http://localhost:3000/cs-data-provider/organizations/2/incidents/:id/graph
-          - name: Observed Data
-            type: table
-            url: http://localhost:3000/cs-data-provider/organizations/2/incidents/:id/table
-          - type: channel
-      - name: Policies
-        id: "7"
-        url: http://localhost:3000/cs-data-provider/organizations/2/policies
-        widgets:
-          - name: Dos
-            type: list
-            url: http://localhost:3000/cs-data-provider/organizations/2/policies/:id/dos
-          - name: Don'ts
-            type: list
-            url: http://localhost:3000/cs-data-provider/organizations/2/policies/:id/donts
-          - type: channel
-      - name: Stories
-        id: "8"
-        internal: true
-        url: http://localhost:3000/cs-data-provider/organizations/2/stories
-        widgets:
-          - name: Events
-            type: timeline
-            url: http://localhost:3000/cs-data-provider/organizations/2/stories/:id/timeline
-          - type: channel
-    widgets: []
-  - name: Organization Z
-    id: "3"
-    description: This is the Z organization
-    sections:
-      - name: Incidents
-        id: "9"
-        url: http://localhost:3000/cs-data-provider/organizations/3/incidents
-        widgets:
-          - name: Description
-            type: text-box
-            url: http://localhost:3000/cs-data-provider/organizations/3/incidents/:id/text_box
-          - name: System
-            type: graph
-            url: http://localhost:3000/cs-data-provider/organizations/3/incidents/:id/graph
-          - name: Observed Data
-            type: table
-            url: http://localhost:3000/cs-data-provider/organizations/3/incidents/:id/table
-          - type: channel
-      - name: Policies
+      - name: Annual Surface Temperature Change
         id: "10"
-        url: http://localhost:3000/cs-data-provider/organizations/3/policies
+        url: http://localhost:3000/cc-data-provider/organizations/1/temperatures
         widgets:
-          - name: Dos
-            type: list
-            url: http://localhost:3000/cs-data-provider/organizations/3/policies/:id/dos
-          - name: Don'ts
-            type: list
-            url: http://localhost:3000/cs-data-provider/organizations/3/policies/:id/donts
+          - name: World Map
+            type: world-map
+            url: http://localhost:3000/cc-data-provider/organizations/1/temperatures/:id/map
           - type: channel
-      - name: Stories
+      - name: World Monthly Atmospheric Carbon Dioxide Concentrations
         id: "11"
-        internal: true
-        url: http://localhost:3000/cs-data-provider/organizations/3/stories
+        url: http://localhost:3000/cc-data-provider/organizations/1/dioxides
         widgets:
-          - name: Events
-            type: timeline
-            url: http://localhost:3000/cs-data-provider/organizations/3/stories/:id/timeline
           - type: channel
-    widgets: []
+      - name: Change in Mean Sea Levels
+        id: "12"
+        url: http://localhost:3000/cc-data-provider/organizations/1/seas
+        widgets:
+          - type: channel
