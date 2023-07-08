@@ -4,6 +4,8 @@
 import React, {Fragment, HTMLAttributes, ReactNode} from 'react';
 import styled from 'styled-components';
 
+import {Spacer} from 'src/components/backstage/grid';
+
 type Props = {
     heading: ReactNode;
     level?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -65,10 +67,6 @@ const HeaderEl = styled.header`
         font-weight: 400;
         line-height: 16px;
     }
-`;
-
-const Spacer = styled.div`
-    flex: 1;
 `;
 
 export default Header;

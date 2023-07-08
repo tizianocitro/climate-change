@@ -31,7 +31,6 @@ export const useScrollIntoView = (hash: string) => {
     useEffect(() => {
         const previousHash = localStorage.getItem('previousHash');
         if (hash !== '' || previousHash) {
-            console.log('scrolling');
             setTimeout(() => {
                 let urlHash = hash;
                 if (urlHash === '' && previousHash) {
