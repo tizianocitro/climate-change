@@ -20,48 +20,48 @@ var migrations = []Migration{
 		toVersion:   semver.MustParse("0.1.0"),
 		migrationFunc: func(e sqlx.Ext, db *DB) error {
 			if _, err := e.Exec(`
-				CREATE TABLE IF NOT EXISTS CSFDP_System (
+				CREATE TABLE IF NOT EXISTS CCDP_System (
 					SKey VARCHAR(64) PRIMARY KEY,
 					SValue VARCHAR(1024) NULL
 				);
 			`); err != nil {
-				return errors.Wrapf(err, "failed creating table CSFDP_System")
+				return errors.Wrapf(err, "failed creating table CCDP_System")
 			}
 
 			if _, err := e.Exec(`
-				CREATE TABLE IF NOT EXISTS CSFDP_Issue (
+				CREATE TABLE IF NOT EXISTS CCDP_Issue (
 					ID TEXT PRIMARY KEY,
 					Name TEXT NOT NULL,
 					ObjectivesAndResearchArea TEXT
 				);
 			`); err != nil {
-				return errors.Wrapf(err, "failed creating table CSFDP_Issue")
+				return errors.Wrapf(err, "failed creating table CCDP_Issue")
 			}
 
 			if _, err := e.Exec(`
-				CREATE TABLE IF NOT EXISTS CSFDP_Outcome (
-					IssueID TEXT NOT NULL REFERENCES CSFDP_Issue(ID),
+				CREATE TABLE IF NOT EXISTS CCDP_Outcome (
+					IssueID TEXT NOT NULL REFERENCES CCDP_Issue(ID),
 					ID TEXT NOT NULL,
 					Outcome TEXT
 				);
 			`); err != nil {
-				return errors.Wrapf(err, "failed creating table CSFDP_Outcome")
+				return errors.Wrapf(err, "failed creating table CCDP_Outcome")
 			}
 
 			if _, err := e.Exec(`
-				CREATE TABLE IF NOT EXISTS CSFDP_Role (
-					IssueID TEXT NOT NULL REFERENCES CSFDP_Issue(ID),
+				CREATE TABLE IF NOT EXISTS CCDP_Role (
+					IssueID TEXT NOT NULL REFERENCES CCDP_Issue(ID),
 					ID TEXT NOT NULL,
 					UserID TEXT,
 					Roles TEXT
 				);
 			`); err != nil {
-				return errors.Wrapf(err, "failed creating table CSFDP_Role")
+				return errors.Wrapf(err, "failed creating table CCDP_Role")
 			}
 
 			if _, err := e.Exec(`
-				CREATE TABLE IF NOT EXISTS CSFDP_Element (
-					IssueID TEXT NOT NULL REFERENCES CSFDP_Issue(ID),
+				CREATE TABLE IF NOT EXISTS CCDP_Element (
+					IssueID TEXT NOT NULL REFERENCES CCDP_Issue(ID),
 					ID TEXT NOT NULL,
 					Name TEXT NOT NULL,
 					Description TEXT,
@@ -69,17 +69,17 @@ var migrations = []Migration{
 					ParentID TEXT NOT NULL
 				);
 			`); err != nil {
-				return errors.Wrapf(err, "failed creating table CSFDP_Element")
+				return errors.Wrapf(err, "failed creating table CCDP_Element")
 			}
 
 			if _, err := e.Exec(`
-				CREATE TABLE IF NOT EXISTS CSFDP_Attachment (
-					IssueID TEXT NOT NULL REFERENCES CSFDP_Issue(ID),
+				CREATE TABLE IF NOT EXISTS CCDP_Attachment (
+					IssueID TEXT NOT NULL REFERENCES CCDP_Issue(ID),
 					ID TEXT NOT NULL,
 					Attachment TEXT
 				);
 			`); err != nil {
-				return errors.Wrapf(err, "failed creating table CSFDP_Attachment")
+				return errors.Wrapf(err, "failed creating table CCDP_Attachment")
 			}
 
 			return nil

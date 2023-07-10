@@ -29,7 +29,7 @@ func NewIssueRepository(db *db.DB) *IssueRepository {
 func (r *IssueRepository) GetIssues() ([]model.Issue, error) {
 	issuesSelect := r.queryBuilder.
 		Select("*").
-		From("CSFDP_Issue")
+		From("CCDP_Issue")
 	var issuesResults []model.Issue
 	err := r.db.SelectBuilder(r.db.DB, &issuesResults, issuesSelect)
 	if err == sql.ErrNoRows {
@@ -53,7 +53,7 @@ func (r *IssueRepository) GetIssues() ([]model.Issue, error) {
 func (r *IssueRepository) GetIssueByID(id string) (model.Issue, error) {
 	issueByIDSelect := r.queryBuilder.
 		Select("*").
-		From("CSFDP_Issue").
+		From("CCDP_Issue").
 		Where(sq.Eq{"ID": id})
 	var issue model.Issue
 	err := r.db.GetBuilder(r.db.DB, &issue, issueByIDSelect)
@@ -74,7 +74,7 @@ func (r *IssueRepository) GetIssueByID(id string) (model.Issue, error) {
 func (r *IssueRepository) ExistsIssueByName(name string) bool {
 	issueByNameSelect := r.queryBuilder.
 		Select("*").
-		From("CSFDP_Issue").
+		From("CCDP_Issue").
 		Where(sq.Eq{"Name": name})
 	var issues []model.Issue = []model.Issue{}
 	err := r.db.SelectBuilder(r.db.DB, &issues, issueByNameSelect)
@@ -87,7 +87,7 @@ func (r *IssueRepository) ExistsIssueByName(name string) bool {
 func (r *IssueRepository) getIssueWithOutcomes(issue *model.Issue) error {
 	outcomesSelect := r.queryBuilder.
 		Select("*").
-		From("CSFDP_Outcome").
+		From("CCDP_Outcome").
 		Where(sq.Eq{"IssueID": issue.ID})
 	var outcomes []model.IssueOutcome
 	err := r.db.SelectBuilder(r.db.DB, &outcomes, outcomesSelect)
@@ -103,7 +103,7 @@ func (r *IssueRepository) getIssueWithOutcomes(issue *model.Issue) error {
 func (r *IssueRepository) getIssueWithRoles(issue *model.Issue) error {
 	rolesSelect := r.queryBuilder.
 		Select("*").
-		From("CSFDP_Role").
+		From("CCDP_Role").
 		Where(sq.Eq{"IssueID": issue.ID})
 	var rolesEntities []model.IssueRoleEntity
 	err := r.db.SelectBuilder(r.db.DB, &rolesEntities, rolesSelect)
@@ -128,7 +128,7 @@ func (r *IssueRepository) getIssueWithRoles(issue *model.Issue) error {
 func (r *IssueRepository) getIssueWithElements(issue *model.Issue) error {
 	elementsSelect := r.queryBuilder.
 		Select("*").
-		From("CSFDP_Element").
+		From("CCDP_Element").
 		Where(sq.Eq{"IssueID": issue.ID})
 	var elements []model.IssueElement
 	err := r.db.SelectBuilder(r.db.DB, &elements, elementsSelect)
@@ -144,7 +144,7 @@ func (r *IssueRepository) getIssueWithElements(issue *model.Issue) error {
 func (r *IssueRepository) getIssueWithAttachments(issue *model.Issue) error {
 	attachmentsSelect := r.queryBuilder.
 		Select("*").
-		From("CSFDP_Attachment").
+		From("CCDP_Attachment").
 		Where(sq.Eq{"IssueID": issue.ID})
 	var attachments []model.IssueAttachment
 	err := r.db.SelectBuilder(r.db.DB, &attachments, attachmentsSelect)
@@ -165,7 +165,7 @@ func (r *IssueRepository) SaveIssue(issue model.Issue) (model.Issue, error) {
 	defer r.db.FinalizeTransaction(tx)
 
 	if _, err := r.db.ExecBuilder(tx, sq.
-		Insert("CSFDP_Issue").
+		Insert("CCDP_Issue").
 		SetMap(map[string]interface{}{
 			"ID":                        issue.ID,
 			"Name":                      issue.Name,
@@ -199,7 +199,7 @@ func (r *IssueRepository) saveIssueOutcomes(tx *sqlx.Tx, issue model.Issue) erro
 		outcomeMap["IssueID"] = issue.ID
 
 		if _, err := r.db.ExecBuilder(tx, sq.
-			Insert("CSFDP_Outcome").
+			Insert("CCDP_Outcome").
 			SetMap(outcomeMap)); err != nil {
 			return errors.Wrap(err, "could not save outcome")
 		}
@@ -210,7 +210,7 @@ func (r *IssueRepository) saveIssueOutcomes(tx *sqlx.Tx, issue model.Issue) erro
 func (r *IssueRepository) saveIssueRoles(tx *sqlx.Tx, issue model.Issue) error {
 	for _, role := range issue.Roles {
 		if _, err := r.db.ExecBuilder(tx, sq.
-			Insert("CSFDP_Role").
+			Insert("CCDP_Role").
 			SetMap(map[string]interface{}{
 				"ID":      role.ID,
 				"UserID":  role.UserID,
@@ -231,7 +231,7 @@ func (r *IssueRepository) saveIssueElements(tx *sqlx.Tx, issue model.Issue) erro
 		elementMap["IssueID"] = issue.ID
 
 		if _, err := r.db.ExecBuilder(tx, sq.
-			Insert("CSFDP_Element").
+			Insert("CCDP_Element").
 			SetMap(elementMap)); err != nil {
 			return errors.Wrap(err, "could not save element")
 		}
@@ -247,7 +247,7 @@ func (r *IssueRepository) saveIssueAttachments(tx *sqlx.Tx, issue model.Issue) e
 		attachmentMap["IssueID"] = issue.ID
 
 		if _, err := r.db.ExecBuilder(tx, sq.
-			Insert("CSFDP_Attachment").
+			Insert("CCDP_Attachment").
 			SetMap(attachmentMap)); err != nil {
 			return errors.Wrap(err, "could not save attachment")
 		}
