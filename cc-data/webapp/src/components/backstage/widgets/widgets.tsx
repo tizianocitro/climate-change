@@ -11,6 +11,7 @@ import SingleChannelWrapper from './single_channel/wrappers/single_channel_wrapp
 import TableWrapper from './table/wrappers/table_wrapper';
 import TextBoxWrapper from './text_box/wrappers/text_box_wrapper';
 import TimelineWrapper from './timeline/wrappers/timeline_wrappers';
+import MapWrapper from './map/wrappers/map_wrapper';
 import {WidgetType} from './widget_types';
 
 type Props = {
@@ -31,6 +32,8 @@ const buildWidgetByType = (
         return <PaginatedTableWrapper {...props}/>;
     case WidgetType.List:
         return <ListWrapper {...props}/>;
+    case WidgetType.WorldMap:
+        return <MapWrapper {...props}/>;
     case WidgetType.Table:
         return <TableWrapper {...props}/>;
     case WidgetType.TextBox:
