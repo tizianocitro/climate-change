@@ -6,9 +6,10 @@ export type MapData = {
 export type Country = {
     id: string;
     iso3: string;
-    coordinates?: any;
     country: string;
-    value: number;
+    value: number | string;
+    name?: string;
+    coordinates?: any;
 };
 
 export type PointData = {
@@ -19,4 +20,15 @@ export type PointData = {
 export type Point = {
     value: string;
     label: string;
+};
+
+export const defaultMapData: MapData = {
+    items: [],
+    points: {
+        defaultPoint: {
+            label: '2022',
+            value: '2022',
+        },
+        points: [],
+    },
 };
