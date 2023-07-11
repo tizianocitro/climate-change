@@ -11,7 +11,7 @@ import (
 )
 
 func UseRoutes(app *fiber.App, context *config.Context) {
-	basePath := app.Group("/cs-data-provider")
+	basePath := app.Group("/cc-data-provider")
 	useOrganizations(basePath)
 	useEcosystem(basePath, context)
 }
@@ -30,75 +30,25 @@ func useOrganizations(basePath fiber.Router) {
 		log.Printf("GET /organizations/:organizationId called")
 		return controller.GetOrganization(c)
 	})
-	useOrganizationsIncidents(organizations)
-	useOrganizationsStories(organizations)
-	useOrganizationsPolicies(organizations)
+	useOrganizationsTemperatures(organizations)
 }
 
-func useOrganizationsIncidents(organizations fiber.Router) {
-	incidents := organizations.Group("/:organizationId/incidents")
-	incidents.Get("/", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/incidents called")
-		return controller.GetIncidents(c)
-	})
-	incidentsWithId := incidents.Group("/:incidentId")
-	incidentsWithId.Get("/", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/incidents/:incidentId called")
-		return controller.GetIncident(c)
-	})
-	incidentsWithId.Get("/graph", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/incidents/:incidentId/graph called")
-		return controller.GetIncidentGraph(c)
-	})
-	incidentsWithId.Get("/table", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/incidents/:incidentId/table called")
-		return controller.GetIncidentTable(c)
-	})
-	incidentsWithId.Get("/text_box", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/incidents/:incidentId/text_box called")
-		return controller.GetIncidentTextBox(c)
-	})
-}
+func useOrganizationsTemperatures(organizations fiber.Router) {
+	temperatureController := controller.NewTemperatureController()
 
-func useOrganizationsPolicies(organizations fiber.Router) {
-	policies := organizations.Group("/:organizationId/policies")
-	policies.Get("/", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/policies called")
-		return controller.GetPolicies(c)
+	temperatures := organizations.Group("/:organizationId/temperatures")
+	temperatures.Get("/", func(c *fiber.Ctx) error {
+		log.Printf("GET /:organizationId/temperatures called")
+		return temperatureController.GetTemperatures(c)
 	})
-	policiesWithId := policies.Group("/:policyId")
-	policiesWithId.Get("/", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/policies/:policyId called")
-		return controller.GetPolicy(c)
+	temperaturesWithId := temperatures.Group("/:temperatureId")
+	temperaturesWithId.Get("/", func(c *fiber.Ctx) error {
+		log.Printf("GET /:organizationId/temperatures/:temperatureId called")
+		return temperatureController.GetTemperature(c)
 	})
-	policiesWithId.Get("/dos", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/policies/:policyId/dos called")
-		return controller.GetPolicyDos(c)
-	})
-	policiesWithId.Get("/donts", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/policies/:policyId/donts called")
-		return controller.GetPolicyDonts(c)
-	})
-}
-
-func useOrganizationsStories(organizations fiber.Router) {
-	stories := organizations.Group("/:organizationId/stories")
-	stories.Get("/", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/stories called")
-		return controller.GetStories(c)
-	})
-	stories.Post("/", func(c *fiber.Ctx) error {
-		log.Printf("POST /:organizationId/stories called")
-		return controller.SaveStory(c)
-	})
-	storiesWithId := stories.Group("/:storyId")
-	storiesWithId.Get("/", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/stories/:storyId called")
-		return controller.GetStory(c)
-	})
-	storiesWithId.Get("/timeline", func(c *fiber.Ctx) error {
-		log.Printf("GET /:organizationId/stories/:storyId/timeline called")
-		return controller.GetStoryTimeline(c)
+	temperaturesWithId.Get("/map", func(c *fiber.Ctx) error {
+		log.Printf("GET /:organizationId/temperatures/:temperatureId/map called")
+		return temperatureController.GetTemperatureMap(c)
 	})
 }
 
