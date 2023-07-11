@@ -129,7 +129,7 @@ func getWorldTemperatureData(year string) (model.MapData, error) {
 			DefaultPoint: points[len(points)-1],
 			Points:       points,
 		},
-		Range:      getMinAndMaxAcrossYars(records),
+		Range:      getTemperatureRangeAcrossYears(records),
 		ColorRange: []string{"#0000ff", "#ff0000"},
 	}, nil
 }
@@ -143,7 +143,7 @@ func getYearIndex(year string) int {
 	return (yearAsNumber - 2022) + 71
 }
 
-func getMinAndMaxAcrossYars(records [][]string) []float64 {
+func getTemperatureRangeAcrossYears(records [][]string) []float64 {
 	min := 0.0
 	max := 0.0
 	firstYearIndex := getYearIndex("1961")
