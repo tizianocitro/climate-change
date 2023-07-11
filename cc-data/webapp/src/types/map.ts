@@ -1,6 +1,8 @@
 export type MapData = {
     items: Country[];
     points: PointData;
+    range: number[];
+    colorRange: string[];
 };
 
 export type Country = {
@@ -31,4 +33,6 @@ export const defaultMapData: MapData = {
         },
         points: [],
     },
+    range: [0, 0],
+    colorRange: ['', ''],
 };

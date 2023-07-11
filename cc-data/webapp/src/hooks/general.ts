@@ -28,6 +28,7 @@ import {
     fetchChannels,
     fetchGraphData,
     fetchListData,
+    fetchMapData,
     fetchPaginatedTableData,
     fetchSectionInfo,
     fetchTableData,
@@ -56,6 +57,7 @@ import {ListData} from 'src/types/list';
 import {TimelineData} from 'src/types/timeline';
 import {formatName, formatSectionPath} from 'src/helpers';
 import {UserOption} from 'src/types/users';
+import {MapData, defaultMapData} from 'src/types/map';
 
 type FetchParams = FetchOrganizationsParams;
 
@@ -368,9 +370,9 @@ export const useTimelineData = (url: string): TimelineData => {
     useEffect(() => {
         let isCanceled = false;
         async function fetchTimelineDataAsync() {
-            const listDataResult = await fetchTimelineData(url);
+            const timelineDataResult = await fetchTimelineData(url);
             if (!isCanceled) {
-                setTimelineData(listDataResult);
+                setTimelineData(timelineDataResult);
             }
         }
 
@@ -381,6 +383,27 @@ export const useTimelineData = (url: string): TimelineData => {
         };
     }, [url]);
     return timelineData as TimelineData;
+};
+
+export const useMapData = (url: string): MapData => {
+    const [mapData, setMapData] = useState<MapData>(defaultMapData);
+
+    useEffect(() => {
+        let isCanceled = false;
+        async function fetchMapDataAsync() {
+            const mapDataResult = await fetchMapData(url);
+            if (!isCanceled) {
+                setMapData(mapDataResult);
+            }
+        }
+
+        fetchMapDataAsync();
+
+        return () => {
+            isCanceled = true;
+        };
+    }, [url]);
+    return mapData as MapData;
 };
 
 export const useChannelsList = (defaultFetchParams: FetchChannelsParams): WidgetChannel[] => {

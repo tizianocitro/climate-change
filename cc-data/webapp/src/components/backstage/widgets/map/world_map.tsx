@@ -35,7 +35,9 @@ import {Country, Point} from 'src/types/map';
 import Features from './features.json';
 
 type Props = {
-    data: Country[]
+    data: Country[];
+    range: number[];
+    colorRange: string[];
     selectedPoint: Point;
     parentId: string;
     sectionId: string;
@@ -44,7 +46,40 @@ type Props = {
 // Removes #_ at the start and then extracts the country ISO3
 export const getCountryFromUrlHash = (urlHash: string): string => urlHash.substring(2).split('_')[1];
 
-const WorldMap: FC<Props> = ({data, selectedPoint, parentId, sectionId}) => {
+const calcCoordinates = (coordinates: any, type: string): any | null => {
+    if (!coordinates) {
+        return null;
+    }
+
+    let lat = 0;
+    let long = 0;
+    let count = 0;
+    coordinates.forEach((coordinate: any) => {
+        coordinate.forEach((polygonOrMultiPolygon: any) => {
+            if (type === 'Polygon') {
+                lat += parseFloat(polygonOrMultiPolygon[0]);
+                long += parseFloat(polygonOrMultiPolygon[1]);
+                count++;
+            } else {
+                polygonOrMultiPolygon.forEach((multiPolygon: any) => {
+                    lat += parseFloat(multiPolygon[0]);
+                    long += parseFloat(multiPolygon[1]);
+                    count++;
+                });
+            }
+        });
+    });
+    return [lat / count, long / count];
+};
+
+const WorldMap: FC<Props> = ({
+    data,
+    range,
+    colorRange,
+    selectedPoint,
+    parentId,
+    sectionId,
+}) => {
     const isEcosystemRhs = useContext(IsEcosystemRhsContext);
     const isRhs = useContext(IsRhsContext);
     const fullUrl = useContext(FullUrlContext);
@@ -60,16 +95,16 @@ const WorldMap: FC<Props> = ({data, selectedPoint, parentId, sectionId}) => {
     const {formatMessage} = useIntl();
     const {add: addToast} = useToaster();
 
-    const colorScale = scaleLinear<string>().
-        domain([100, 200]).
-        range(['#ffedea', '#ff5233']);
+    const colorScale = scaleLinear<string>().domain(range).range(colorRange);
 
     const handleMouseEnter = (event: MouseEvent, geo: any) => {
         const {name} = geo.properties;
-        const countryData = data.find((country) => country.country === name);
-        if (countryData) {
-            setTooltipContent(`${name}: ${countryData.value}`);
+        const countryData = data.find((country) => country.iso3 === geo.id);
+        if (!countryData) {
+            setTooltipContent(`${name}: unknown`);
+            return;
         }
+        setTooltipContent(`${name}: ${countryData.value}`);
     };
 
     const handleMouseLeave = () => {
@@ -92,37 +127,29 @@ const WorldMap: FC<Props> = ({data, selectedPoint, parentId, sectionId}) => {
             return;
         }
         const countryIso3 = getCountryFromUrlHash(urlHash);
-        const hashedCountry = data.find((country) => country.iso3 === countryIso3);
-        if (!hashedCountry) {
-            return;
-        }
-        const geography = savedGeographies.find((geo: any) => geo.id === hashedCountry?.iso3);
-
-        const calcCoordinates = (coordinates: any, type: string): any => {
-            let lat = 0;
-            let long = 0;
-            let count = 0;
-            coordinates.forEach((coordinate: any) => {
-                coordinate.forEach((polygonOrMultiPolygon: any) => {
-                    if (type === 'Polygon') {
-                        lat += parseFloat(polygonOrMultiPolygon[0]);
-                        long += parseFloat(polygonOrMultiPolygon[1]);
-                        count++;
-                    } else {
-                        polygonOrMultiPolygon.forEach((multiPolygon: any) => {
-                            lat += parseFloat(multiPolygon[0]);
-                            long += parseFloat(multiPolygon[1]);
-                            count++;
-                        });
-                    }
-                });
-            });
-            return [lat / count, long / count];
-        };
+        let hashedCountry = data.find((country) => country.iso3 === countryIso3);
+        const geography = savedGeographies.find((geo: any) => geo.id === countryIso3);
         const hashedCountryCoordinates = calcCoordinates(
             geography?.geometry?.coordinates,
             geography?.geometry?.type);
-        setSelectedCountry({...hashedCountry, coordinates: hashedCountryCoordinates});
+        if (!hashedCountryCoordinates) {
+            return;
+        }
+        const name = geography?.properties?.name ?? hashedCountry?.country ?? '';
+        if (!hashedCountry) {
+            hashedCountry = {
+                id: countryIso3,
+                country: geography?.properties?.name,
+                iso3: countryIso3,
+                value: 'unknown',
+            };
+        }
+
+        setSelectedCountry({
+            ...hashedCountry,
+            name,
+            coordinates: hashedCountryCoordinates,
+        });
     });
 
     const width = isRhs ? '100%' : '90%';
@@ -140,7 +167,7 @@ const WorldMap: FC<Props> = ({data, selectedPoint, parentId, sectionId}) => {
                     <Sphere
                         id='world-sphere'
                         stroke='#E4E5E6'
-                        fill='#FFFFFF'
+                        fill='#87CEEB'
                         strokeWidth={0.5}
                     />
                     <Graticule
@@ -153,7 +180,10 @@ const WorldMap: FC<Props> = ({data, selectedPoint, parentId, sectionId}) => {
                                 setSavedGeographies(geographies);
                             }
                             const countryData = data.find((country) => country.iso3 === geo.id);
-                            const color = countryData ? colorScale(countryData.value) : '#dddddd';
+                            const color = countryData && typeof countryData.value === 'number' ?
+                                colorScale(countryData.value) :
+                                '#dddddd';
+
                             return (
                                 <Geography
                                     key={geo.rsmKey}
@@ -184,9 +214,9 @@ const WorldMap: FC<Props> = ({data, selectedPoint, parentId, sectionId}) => {
                             }}
                         >
                             <rect
-                                x={selectedCountry.country.length <= 50 ? '-50' : selectedCountry.country.length * -1}
+                                x={!selectedCountry.name || selectedCountry.name.length <= 14 ? '-50' : '-100'}
                                 y='-11'
-                                width='100'
+                                width={!selectedCountry.name || selectedCountry.name.length <= 14 ? '100' : '200'}
                                 height='20'
                                 rx='5'
                                 ry='5'
@@ -199,7 +229,7 @@ const WorldMap: FC<Props> = ({data, selectedPoint, parentId, sectionId}) => {
                                 alignmentBaseline='middle'
                                 style={{fill: '#000000'}}
                             >
-                                {selectedCountry.country}
+                                {selectedCountry.name}
                             </text>
                         </Annotation>
                     }
