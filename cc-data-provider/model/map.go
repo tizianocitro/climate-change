@@ -6,6 +6,7 @@ type MapData struct {
 	Range      []float64 `json:"range"`
 	ColorRange []string  `json:"colorRange"`
 	WorldEnv   WorldEnv  `json:"worldEnv"`
+	SeaEnv     SeaEnv    `json:"seaEnv"`
 }
 
 type Country struct {
@@ -26,6 +27,16 @@ type Point struct {
 }
 
 type WorldEnv struct {
-	Value string `json:"value"`
-	Color string `json:"color"`
+	Value      float64   `json:"value"`
+	Range      []float64 `json:"range"`
+	ColorRange []string  `json:"colorRange"`
+}
+
+type SeaEnv struct {
+	Label            string    `json:"label"`
+	Value            float64   `json:"value"`
+	CountriesColor   string    `json:"countriesColor"`
+	NoCountriesValue bool      `json:"noCountriesValue"`
+	Range            []float64 `json:"range"`
+	ColorRange       []string  `json:"colorRange"`
 }
