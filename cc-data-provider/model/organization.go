@@ -51,33 +51,13 @@ type IssueRoleEntity struct {
 	IssueID string `json:"-"`
 }
 
-type Incident struct {
+type Temperature struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
 
-// TODO: refactor with composition
-type ExtendedIncident struct {
-	State         string `json:"state"`
-	ClosedAt      string `json:"closedAt"`
-	FirstObserved string `json:"firstObserved"`
-	ID            string `json:"id"`
-	Type          string `json:"type"`
-	Group         string `json:"group"`
-	AssignedTo    string `json:"assignedTo"`
-	Where         string `json:"where"`
-	Name          string `json:"name"`
-	Description   string `json:"description"`
-}
-
-type Policy struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-}
-
-type Story struct {
+type Dioxide struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
