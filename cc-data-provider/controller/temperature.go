@@ -3,14 +3,15 @@ package controller
 import (
 	"encoding/csv"
 	"errors"
-	"io/fs"
 	"log"
+	"math"
 	"strconv"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/tizianocitro/climate-change/cc-data-provider/data"
 	"github.com/tizianocitro/climate-change/cc-data-provider/model"
+	"github.com/tizianocitro/climate-change/cc-data-provider/util"
 )
 
 type TemperatureController struct{}
@@ -67,13 +68,11 @@ func getTemperatureByID(c *fiber.Ctx) model.Temperature {
 }
 
 func getWorldTemperatureData(year string) (model.MapData, error) {
-	filePaths, err := fs.Glob(data.Data, "*.csv")
+	filePath, err := util.GetEmbeddedFilePathByName("annual_surface_temperature_change.csv")
 	if err != nil {
-		log.Fatal(err)
+		return model.MapData{}, err
 	}
-
-	// filePath := filepath.Join("data", "annual_surface_temperature_change.csv")
-	file, err := data.Data.Open(filePaths[0])
+	file, err := data.Data.Open(filePath)
 	if err != nil {
 		return model.MapData{}, err
 	}
@@ -102,7 +101,7 @@ func getWorldTemperatureData(year string) (model.MapData, error) {
 		}
 		yearAsNumber, err := strconv.ParseFloat(rowYear, 64)
 		if err != nil {
-			log.Println("Error converting year from string to float64", err, "rowFromYearIndex", row[yearIndex])
+			log.Println("Error converting year from string to float64", err)
 			return model.MapData{}, err
 		}
 		items = append(items, model.Country{
@@ -130,6 +129,8 @@ func getWorldTemperatureData(year string) (model.MapData, error) {
 			DefaultPoint: points[len(points)-1],
 			Points:       points,
 		},
+		Range:      getMinAndMaxAcrossYars(records),
+		ColorRange: []string{"#0000ff", "#ff0000"},
 	}, nil
 }
 
@@ -140,6 +141,32 @@ func getYearIndex(year string) int {
 		return -1
 	}
 	return (yearAsNumber - 2022) + 71
+}
+
+func getMinAndMaxAcrossYars(records [][]string) []float64 {
+	min := 0.0
+	max := 0.0
+	firstYearIndex := getYearIndex("1961")
+	lastYearIndex := getYearIndex("2022")
+	for index, row := range records {
+		if index == 0 {
+			continue
+		}
+		for i := firstYearIndex; i <= lastYearIndex; i++ {
+			rowYear := row[i]
+			if rowYear == "" {
+				rowYear = "0"
+			}
+			yearAsNumber, err := strconv.ParseFloat(rowYear, 64)
+			if err != nil {
+				log.Println("Error converting year from string to float64 to find min and max", err)
+				return []float64{}
+			}
+			min = math.Min(yearAsNumber, min)
+			max = math.Max(yearAsNumber, max)
+		}
+	}
+	return []float64{min, max}
 }
 
 var temperaturesMap = map[string][]model.Temperature{
