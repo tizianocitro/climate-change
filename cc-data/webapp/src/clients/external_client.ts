@@ -8,6 +8,7 @@ import {TableData} from 'src/types/table';
 import {TextBoxData} from 'src/types/text_box';
 import {ListData} from 'src/types/list';
 import {TimelineData} from 'src/types/timeline';
+import {MapData, defaultMapData} from 'src/types/map';
 
 export const fetchSectionInfo = async (id: string, url: string): Promise<SectionInfo> => {
     let data = await doGet<SectionInfo>(`${url}/${id}`);
@@ -72,6 +73,14 @@ export const fetchTimelineData = async (url: string): Promise<TimelineData> => {
     let data = await doGet<TimelineData>(url);
     if (!data) {
         data = {items: []} as TimelineData;
+    }
+    return data;
+};
+
+export const fetchMapData = async (url: string): Promise<MapData> => {
+    let data = await doGet<MapData>(url);
+    if (!data) {
+        data = defaultMapData;
     }
     return data;
 };
