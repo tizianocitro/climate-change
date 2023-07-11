@@ -35,21 +35,11 @@ var organizations = []model.Organization{
 	{
 		ID:          "0",
 		Name:        "Ecosystem",
-		Description: "Ecosystem organization",
+		Description: "This organization is for the whole ecosystem",
 	},
 	{
 		ID:          "1",
-		Name:        "X",
-		Description: "X organization",
-	},
-	{
-		ID:          "2",
-		Name:        "Y",
-		Description: "Y organization",
-	},
-	{
-		ID:          "3",
-		Name:        "Z",
-		Description: "Z organization",
+		Name:        "IMF Climate Data",
+		Description: "The organization at https://climatedata.imf.org/pages/climatechange-data",
 	},
 }
