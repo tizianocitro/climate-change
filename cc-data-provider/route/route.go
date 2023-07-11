@@ -31,6 +31,7 @@ func useOrganizations(basePath fiber.Router) {
 		return controller.GetOrganization(c)
 	})
 	useOrganizationsTemperatures(organizations)
+	useOrganizationsDioxide(organizations)
 }
 
 func useOrganizationsTemperatures(organizations fiber.Router) {
@@ -49,6 +50,25 @@ func useOrganizationsTemperatures(organizations fiber.Router) {
 	temperaturesWithId.Get("/map", func(c *fiber.Ctx) error {
 		log.Printf("GET /:organizationId/temperatures/:temperatureId/map called")
 		return temperatureController.GetTemperatureMap(c)
+	})
+}
+
+func useOrganizationsDioxide(organizations fiber.Router) {
+	dioxideController := controller.NewDioxideController()
+
+	dioxide := organizations.Group("/:organizationId/dioxide")
+	dioxide.Get("/", func(c *fiber.Ctx) error {
+		log.Printf("GET /:organizationId/dioxide called")
+		return dioxideController.GetAllDioxide(c)
+	})
+	dioxideWithId := dioxide.Group("/:dioxideId")
+	dioxideWithId.Get("/", func(c *fiber.Ctx) error {
+		log.Printf("GET /:organizationId/dioxide/:dioxideId called")
+		return dioxideController.GetDioxide(c)
+	})
+	dioxideWithId.Get("/map", func(c *fiber.Ctx) error {
+		log.Printf("GET /:organizationId/dioxide/:dioxideId/map called")
+		return dioxideController.GetDioxideMap(c)
 	})
 }
 
