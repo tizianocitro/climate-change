@@ -1,8 +1,11 @@
 package model
 
 type MapData struct {
-	Items  []Country `json:"items"`
-	Points PointData `json:"points"`
+	Items      []Country `json:"items"`
+	Points     PointData `json:"points"`
+	Range      []float64 `json:"range"`
+	ColorRange []string  `json:"colorRange"`
+	WorldEnv   WorldEnv  `json:"worldEnv"`
 }
 
 type Country struct {
@@ -20,4 +23,9 @@ type PointData struct {
 type Point struct {
 	Label string `json:"label"`
 	Value string `json:"value"`
+}
+
+type WorldEnv struct {
+	Value string `json:"value"`
+	Color string `json:"color"`
 }
