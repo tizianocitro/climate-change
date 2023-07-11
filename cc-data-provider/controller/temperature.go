@@ -46,12 +46,20 @@ func (tc *TemperatureController) GetTemperatureMap(c *fiber.Ctx) error {
 		return c.JSON(model.MapData{})
 	}
 	year := c.Query("year")
+	if !isYearInTemperaturesRange(year) {
+		return c.JSON(model.MapData{})
+	}
 	if temperature.Name == "World" {
 		mapData, err := getWorldTemperatureData(year)
 		if err != nil {
 			return err
 		}
-		return c.JSON(mapData)
+		return c.JSON(fiber.Map{
+			"items":      mapData.Items,
+			"points":     mapData.Points,
+			"range":      mapData.Range,
+			"colorRange": mapData.ColorRange,
+		})
 	}
 	return c.JSON(model.MapData{})
 }
@@ -134,15 +142,6 @@ func getWorldTemperatureData(year string) (model.MapData, error) {
 	}, nil
 }
 
-func getYearIndex(year string) int {
-	yearAsNumber, err := strconv.Atoi(year)
-	if err != nil {
-		log.Println("Error converting year from string to int", err)
-		return -1
-	}
-	return (yearAsNumber - 2022) + 71
-}
-
 func getTemperatureRangeAcrossYears(records [][]string) []float64 {
 	min := 0.0
 	max := 0.0
@@ -162,6 +161,11 @@ func getTemperatureRangeAcrossYears(records [][]string) []float64 {
 				log.Println("Error converting year from string to float64 to find min and max", err)
 				return []float64{}
 			}
+			if index == 1 {
+				min = yearAsNumber
+				max = yearAsNumber
+				continue
+			}
 			min = math.Min(yearAsNumber, min)
 			max = math.Max(yearAsNumber, max)
 		}
@@ -169,12 +173,29 @@ func getTemperatureRangeAcrossYears(records [][]string) []float64 {
 	return []float64{min, max}
 }
 
+func getYearIndex(year string) int {
+	yearAsNumber, err := strconv.Atoi(year)
+	if err != nil {
+		log.Println("Error converting year from string to int", err)
+		return -1
+	}
+	return (yearAsNumber - 2022) + 71
+}
+
+func isYearInTemperaturesRange(year string) bool {
+	yearAsNumber, err := strconv.Atoi(year)
+	if err != nil {
+		return false
+	}
+	return yearAsNumber >= 1961 && yearAsNumber <= 2022
+}
+
 var temperaturesMap = map[string][]model.Temperature{
 	"1": {
 		{
 			ID:          "2ce53d5c-4bd4-4f02-89cc-d5b8f551770c",
 			Name:        "World",
-			Description: "Temperatures from all over the world",
+			Description: "Annual surface temperature change in the world",
 		},
 	},
 }
