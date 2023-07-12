@@ -141,16 +141,7 @@ func getWorldDioxideData(year string) (model.MapData, error) {
 	}, nil
 }
 
-// return model.MapData{
-// 	SeaEnv: model.SeaEnv{
-// 		Label:            "Sea",
-// 		Value:            sum / float64(divider),
-// 		CountriesColor:   "#8B4513",
-// 		NoCountriesValue: true,
-// 		Range:            []float64{},
-// 		ColorRange:       []string{"#000080", "#87CEEB"},
-// 	},
-// }, nil
+// TODO: maybe the range has to be calculated in the same way it was done for sea levels
 func getDioxideRangeAcrossYears(records [][]string) []float64 {
 	min := 0.0
 	max := 0.0
@@ -180,7 +171,7 @@ func isYearInDioxiteRange(year string) bool {
 	if err != nil {
 		return false
 	}
-	return yearAsNumber > 1958 && yearAsNumber <= 2022
+	return yearAsNumber >= 1958 && yearAsNumber <= 2022
 }
 
 var dioxideMap = map[string][]model.Dioxide{
