@@ -141,10 +141,8 @@ func getWorldDioxideData(year string) (model.MapData, error) {
 	}, nil
 }
 
-// TODO: maybe the range has to be calculated in the same way it was done for sea levels
 func getDioxideRangeAcrossYears(records [][]string) []float64 {
-	min := 0.0
-	max := 0.0
+	yearAverages := make(map[string]model.YearAverage)
 	for index, row := range records {
 		unit := row[5]
 		if index == 0 || unit == "Percent" {
@@ -155,13 +153,36 @@ func getDioxideRangeAcrossYears(records [][]string) []float64 {
 		if err != nil {
 			continue
 		}
-		if index == 1 {
-			min = valueAsNumber
-			max = valueAsNumber
+		date := row[10]
+		year := date[:4]
+		if yearAverage, ok := yearAverages[year]; ok {
+			yearAverages[year] = model.YearAverage{
+				Sum:     yearAverage.Sum + valueAsNumber,
+				Divider: yearAverage.Divider + 1,
+			}
 			continue
 		}
-		min = math.Min(valueAsNumber, min)
-		max = math.Max(valueAsNumber, max)
+		yearAverages[year] = model.YearAverage{
+			Sum:     valueAsNumber,
+			Divider: 1,
+		}
+	}
+	averages := make([]model.YearAverage, 0, len(yearAverages))
+	for _, value := range yearAverages {
+		averages = append(averages, value)
+	}
+
+	min := 0.0
+	max := 0.0
+	for index, average := range averages {
+		value := average.Sum / float64(average.Divider)
+		if index == 0 {
+			min = value
+			max = value
+			continue
+		}
+		min = math.Min(value, min)
+		max = math.Max(value, max)
 	}
 	return []float64{min, max}
 }
