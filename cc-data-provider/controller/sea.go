@@ -19,11 +19,6 @@ func NewSeaController() *SeaController {
 	return &SeaController{}
 }
 
-type YearAverage struct {
-	Sum     float64
-	Divider int
-}
-
 func (sc *SeaController) GetSeas(c *fiber.Ctx) error {
 	organizationId := c.Params("organizationId")
 	tableData := model.PaginatedTableData{
@@ -152,33 +147,33 @@ func getWorldSeaData(year string) (model.MapData, error) {
 }
 
 func getSeaRangeAcrossYears(records [][]string) []float64 {
-	yearAverages := make(map[string]YearAverage)
+	yearAverages := make(map[string]model.YearAverage)
 	for index, row := range records {
 		if index == 0 {
 			continue
 		}
-		date := row[11]
-		year := date[7:]
 		value := row[12]
 		valueAsNumber, err := strconv.ParseFloat(value, 64)
 		if err != nil {
 			continue
 		}
+		date := row[11]
+		year := date[7:]
 		if yearAverage, ok := yearAverages[year]; ok {
-			yearAverages[year] = YearAverage{
+			yearAverages[year] = model.YearAverage{
 				Sum:     yearAverage.Sum + valueAsNumber,
 				Divider: yearAverage.Divider + 1,
 			}
 			continue
 		}
-		yearAverages[year] = YearAverage{
+		yearAverages[year] = model.YearAverage{
 			Sum:     valueAsNumber,
 			Divider: 1,
 		}
 	}
 
 	// create a slice of all keys-value pairs in map and append all them to the slice
-	averages := make([]YearAverage, 0, len(yearAverages))
+	averages := make([]model.YearAverage, 0, len(yearAverages))
 	for _, value := range yearAverages {
 		averages = append(averages, value)
 	}
