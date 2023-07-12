@@ -62,3 +62,9 @@ type Dioxide struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
+
+type Sea struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
