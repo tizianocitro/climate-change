@@ -40,3 +40,8 @@ type SeaEnv struct {
 	Range            []float64 `json:"range"`
 	ColorRange       []string  `json:"colorRange"`
 }
+
+type YearAverage struct {
+	Sum     float64
+	Divider int
+}
