@@ -14,21 +14,27 @@ organizations:
     id: "1"
     description: The organization at https://climatedata.imf.org/pages/climatechange-data
     sections:
-      - name: Annual Surface Temperature Change
+      - name: Surface Temperature Change
         id: "10"
         url: http://localhost:3000/cc-data-provider/organizations/1/temperatures
         widgets:
-          - name: World Map
-            type: world-map
-            url: http://localhost:3000/cc-data-provider/organizations/1/temperatures/:id/map
+          - name: World Change
+            type: map
+            url: http://localhost:3000/cc-data-provider/organizations/1/temperatures/:id/map?year=:year
           - type: channel
-      - name: World Monthly Atmospheric Carbon Dioxide Concentrations
+      - name: Atmospheric Carbon Dioxide Concentrations
         id: "11"
-        url: http://localhost:3000/cc-data-provider/organizations/1/dioxides
+        url: http://localhost:3000/cc-data-provider/organizations/1/dioxide
         widgets:
+          - name: World Concentrations
+            type: map
+            url: http://localhost:3000/cc-data-provider/organizations/1/dioxide/:id/map?year=:year
           - type: channel
-      - name: Change in Mean Sea Levels
+      - name: Change In Mean Sea Levels
         id: "12"
         url: http://localhost:3000/cc-data-provider/organizations/1/seas
         widgets:
+          - name: Sea Levels Change
+            type: map
+            url: http://localhost:3000/cc-data-provider/organizations/1/seas/:id/map?year=:year
           - type: channel
