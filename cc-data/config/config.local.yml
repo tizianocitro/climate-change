@@ -38,3 +38,16 @@ organizations:
             type: map
             url: http://localhost:3000/cc-data-provider/organizations/1/seas/:id/map?year=:year
           - type: channel
+  - name: Data World
+    id: "2"
+    description: The organization at https://data.world
+    sections:
+      - name: Surface Temperature Change
+        id: "13"
+        url: http://localhost:3000/cc-data-provider/organizations/1/temperatures
+        widgets:
+          - name: World Change
+            type: chart
+            chartType: simple-line
+            url: http://localhost:3000/cc-data-provider/organizations/2/temperatures/:id/simple-line-chart
+          - type: channel
