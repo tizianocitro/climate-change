@@ -48,6 +48,10 @@ func useOrganizationsTemperatures(organizations fiber.Router) {
 		log.Printf("GET /:organizationId/temperatures/:temperatureId called")
 		return temperatureController.GetTemperature(c)
 	})
+	temperaturesWithId.Get("/desc", func(c *fiber.Ctx) error {
+		log.Printf("GET /:organizationId/temperatures/:temperatureId/desc called")
+		return temperatureController.GetTemperatureDescription(c)
+	})
 	temperaturesWithId.Get("/map", func(c *fiber.Ctx) error {
 		log.Printf("GET /:organizationId/temperatures/:temperatureId/map called")
 		return temperatureController.GetTemperatureMap(c)
@@ -71,6 +75,10 @@ func useOrganizationsDioxide(organizations fiber.Router) {
 		log.Printf("GET /:organizationId/dioxide/:dioxideId called")
 		return dioxideController.GetDioxide(c)
 	})
+	dioxideWithId.Get("/desc", func(c *fiber.Ctx) error {
+		log.Printf("GET /:organizationId/dioxide/:dioxideId/desc called")
+		return dioxideController.GetDioxideDescription(c)
+	})
 	dioxideWithId.Get("/map", func(c *fiber.Ctx) error {
 		log.Printf("GET /:organizationId/dioxide/:dioxideId/map called")
 		return dioxideController.GetDioxideMap(c)
@@ -89,6 +97,10 @@ func useOrganizationsSea(organizations fiber.Router) {
 	seaWithId.Get("/", func(c *fiber.Ctx) error {
 		log.Printf("GET /:organizationId/seas/:seaId called")
 		return seaController.GetSea(c)
+	})
+	seaWithId.Get("/desc", func(c *fiber.Ctx) error {
+		log.Printf("GET /:organizationId/seas/:seaId/desc called")
+		return seaController.GetSeaDescription(c)
 	})
 	seaWithId.Get("/map", func(c *fiber.Ctx) error {
 		log.Printf("GET /:organizationId/seas/:seaId/map called")
