@@ -39,6 +39,11 @@ func (dc *DioxideController) GetDioxide(c *fiber.Ctx) error {
 	return c.JSON(getDioxideByID(c))
 }
 
+func (dc *DioxideController) GetDioxideDescription(c *fiber.Ctx) error {
+	dioxideId := c.Params("dioxideId")
+	return c.JSON(fiber.Map{"text": dioxideDescriptionMap[dioxideId]})
+}
+
 func (dc *DioxideController) GetDioxideMap(c *fiber.Ctx) error {
 	dioxide := getDioxideByID(c)
 	if dioxide == (model.Dioxide{}) {
@@ -203,6 +208,11 @@ var dioxideMap = map[string][]model.Dioxide{
 			Description: "Atmospheric carbon dioxide concentrations in the world",
 		},
 	},
+}
+
+var dioxideDescriptionMap = map[string]string{
+	"64fc5461-b40c-49ca-a177-ddd2e121ffe1": `This data presents the concentration of carbon dioxide in the atmosphere, dating back to 1958.
+ 	The source data for this data comes from the National Oceanic and Atmospheric Association Global Monitoring Laboratory.`,
 }
 
 var dioxidePaginatedTableData = model.PaginatedTableData{

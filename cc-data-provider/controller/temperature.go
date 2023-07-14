@@ -41,6 +41,11 @@ func (tc *TemperatureController) GetTemperature(c *fiber.Ctx) error {
 	return c.JSON(getTemperatureByID(c))
 }
 
+func (tc *TemperatureController) GetTemperatureDescription(c *fiber.Ctx) error {
+	temperatureId := c.Params("temperatureId")
+	return c.JSON(fiber.Map{"text": temperaturesDescriptionMap[temperatureId]})
+}
+
 func (tc *TemperatureController) GetTemperatureMap(c *fiber.Ctx) error {
 	temperature := getTemperatureByID(c)
 	if temperature == (model.Temperature{}) {
@@ -286,6 +291,13 @@ var temperaturesMap = map[string][]model.Temperature{
 			Description: "Surface temperature change due to CO2 in the world",
 		},
 	},
+}
+
+var temperaturesDescriptionMap = map[string]string{
+	"2ce53d5c-4bd4-4f02-89cc-d5b8f551770c": `This data presents the annual surface temperature change by country during the period 1961-2022.
+	This data is provided by the Food and Agriculture Organization Corporate Statistical Database (FAOSTAT) and is based on publicly available GISTEMP data from the National Aeronautics and Space Administration Goddard Institute for Space Studies (NASA GISS).`,
+	"43d5bc63-4f2f-4098-9e97-5df06149a218": `This data comes from a submission to the data science competition "Data Science vs Fake News" put on by Data World, KDNuggets, and Data4Democracy.
+	The extracted data highlights the land average temperature per year due to C02 from 1958 to 2015.`,
 }
 
 var temperaturesPaginatedTableData = model.PaginatedTableData{
