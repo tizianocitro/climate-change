@@ -210,11 +210,11 @@
     "new-parens": 2,
     "newline-before-return": 0,
     "newline-per-chained-call": 0,
-    // "no-alert": 2,
+    "no-alert": 2,
     "no-array-constructor": 2,
     // "no-await-in-loop": 2,
     "no-caller": 2,
-    "no-case-declarations": 2,
+    "no-case-declarations": 1, // 1 seems to allow case declaration
     "no-class-assign": 2,
     "no-compare-neg-zero": 2,
     "no-cond-assign": [

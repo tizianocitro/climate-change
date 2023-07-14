@@ -39,6 +39,11 @@ func (sc *SeaController) GetSea(c *fiber.Ctx) error {
 	return c.JSON(getSeaByID(c))
 }
 
+func (sc *SeaController) GetSeaDescription(c *fiber.Ctx) error {
+	seaId := c.Params("seaId")
+	return c.JSON(fiber.Map{"text": seasDescriptionMap[seaId]})
+}
+
 func (sc *SeaController) GetSeaMap(c *fiber.Ctx) error {
 	sea := getSeaByID(c)
 	if sea == (model.Sea{}) {
@@ -209,6 +214,11 @@ var seasMap = map[string][]model.Sea{
 			Description: "Change in mean sea levels in the world",
 		},
 	},
+}
+
+var seasDescriptionMap = map[string]string{
+	"04e49629-406f-401e-a650-f577b5b4a949": `This data gives estimates of the rise of global sea levels, based on measurements from satellite radar altimeters. These are produced by measuring the time it takes a radar pulse to make a round-trip from the satellite to the sea surface and back again.
+	The data is obtained by four satellite altimeters (TOPEX/Poseidon, Jason-1, Jason-2, Jason-3), which have monitored the same surfaces since 1992.`,
 }
 
 var seaPaginatedTableData = model.PaginatedTableData{

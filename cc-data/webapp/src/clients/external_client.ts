@@ -9,6 +9,8 @@ import {TextBoxData} from 'src/types/text_box';
 import {ListData} from 'src/types/list';
 import {TimelineData} from 'src/types/timeline';
 import {MapData, defaultMapData} from 'src/types/map';
+import {ChartData} from 'src/types/charts';
+import {ChartType} from 'src/components/backstage/widgets/widget_types';
 
 export const fetchSectionInfo = async (id: string, url: string): Promise<SectionInfo> => {
     let data = await doGet<SectionInfo>(`${url}/${id}`);
@@ -81,6 +83,18 @@ export const fetchMapData = async (url: string): Promise<MapData> => {
     let data = await doGet<MapData>(url);
     if (!data) {
         data = defaultMapData;
+    }
+    return data;
+};
+
+export const fetchChartData = async (url: string, chartType: ChartType | undefined): Promise<ChartData> => {
+    const defaultChartData: ChartData = {chartType: ChartType.NoChart};
+    if (!chartType) {
+        return defaultChartData;
+    }
+    let data = await doGet<ChartData>(url);
+    if (!data) {
+        data = defaultChartData;
     }
     return data;
 };
