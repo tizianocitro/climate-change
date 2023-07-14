@@ -52,6 +52,10 @@ func useOrganizationsTemperatures(organizations fiber.Router) {
 		log.Printf("GET /:organizationId/temperatures/:temperatureId/map called")
 		return temperatureController.GetTemperatureMap(c)
 	})
+	temperaturesWithId.Get("/chart", func(c *fiber.Ctx) error {
+		log.Printf("GET /:organizationId/temperatures/:temperatureId/chart called")
+		return temperatureController.GetTemperatureChart(c)
+	})
 }
 
 func useOrganizationsDioxide(organizations fiber.Router) {
