@@ -235,6 +235,9 @@ func getWorldTemperatureChartData() (model.SimpleLineChartData, error) {
 		}
 		date := row[0]
 		year := date[:4]
+		if year < "1958" {
+			continue
+		}
 		if yearAverage, ok := yearAverages[year]; ok {
 			yearAverages[year] = model.YearAverage{
 				Sum:     yearAverage.Sum + valueAsNumber,
