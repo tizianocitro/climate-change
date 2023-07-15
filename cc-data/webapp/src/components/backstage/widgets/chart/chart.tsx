@@ -57,14 +57,6 @@ const Chart = ({
     const isRhs = useContext(IsRhsContext);
     const fullUrl = useContext(FullUrlContext);
 
-    // useEffect(() => {
-    //     const wrappers = document.getElementsByClassName('recharts-wrapper') as HTMLCollectionOf<HTMLElement>;
-    //     for (let i = 0; i < wrappers.length; i++) {
-    //         // center the chart
-    //         wrappers[i].style.margin = '0 auto';
-    //     }
-    // }, []);
-
     useEffect(() => {
         // make responsive container appear
         const responsiveContainers = document.getElementsByClassName('recharts-responsive-container') as HTMLCollectionOf<HTMLElement>;

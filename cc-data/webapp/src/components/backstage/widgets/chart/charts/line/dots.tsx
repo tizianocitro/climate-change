@@ -1,9 +1,4 @@
-import React, {
-    FC,
-    useContext,
-    useEffect,
-    useState,
-} from 'react';
+import React, {FC, useContext} from 'react';
 import {useIntl} from 'react-intl';
 import {useRouteMatch} from 'react-router-dom';
 import styled from 'styled-components';
@@ -35,17 +30,7 @@ export const idStringify = (id: string): string => {
 type Props = any;
 
 export const Dot: FC<Props> = (props) => {
-    const {cx, cy, fill, payload, value, originalColor, selectedDot, sectionId} = props;
-    const [color, setColor] = useState(fill);
-
-    useEffect(() => {
-        // if (selectedDot.x === cx && selectedDot.y === cy) {
-        if (selectedDot.label === payload.label && valueStringify(selectedDot.value) === valueStringify(value)) {
-            setColor('#F4B400');
-        } else {
-            setColor(originalColor);
-        }
-    }, [selectedDot]);
+    const {cx, cy, payload, value, originalColor, selectedDot, sectionId} = props;
 
     return (
         <DotCircle
@@ -53,26 +38,24 @@ export const Dot: FC<Props> = (props) => {
             cx={cx}
             cy={cy}
             r={4}
-            fill={color}
+            fill={selectedDot.label === payload.label && valueStringify(selectedDot.value) === valueStringify(value) ? '#F4B400' : originalColor}
         />
     );
 };
 
 export const ClickableDot: FC<Props> = (props) => {
-    const {cx, cy, fill, payload, value, originalColor, selectedDot, parentId, sectionId} = props;
+    const {cx, cy, payload, value, originalColor, selectedDot, parentId, sectionId} = props;
 
     const isEcosystemRhs = useContext(IsEcosystemRhsContext);
     const fullUrl = useContext(FullUrlContext);
     const {url} = useRouteMatch();
     const {formatMessage} = useIntl();
     const {add: addToast} = useToaster();
-    const [color, setColor] = useState(fill);
 
     const ecosystemQuery = isEcosystemRhs ? '' : buildQuery(parentId, sectionId);
     const [,, valueString] = dotStringify(cx, cy, value);
 
     const handleDotClick = (event: any) => {
-        // const itemId = `_${cxString}_${cyString}_${payload.label}_${valueString}`;
         const itemId = `dot-${payload.label}-${valueString}-${idStringify(sectionId)}`;
         const name = `${payload.label}: ${value}`;
         const path = buildToForCopy(buildTo(fullUrl, itemId, ecosystemQuery, url));
@@ -80,21 +63,12 @@ export const ClickableDot: FC<Props> = (props) => {
         addToast({content: formatMessage({defaultMessage: 'Copied!'})});
     };
 
-    useEffect(() => {
-        // if (selectedDot.x === cx && selectedDot.y === cy) {
-        if (selectedDot.label === payload.label && valueStringify(selectedDot.value) === valueStringify(value)) {
-            setColor('#F4B400');
-        } else {
-            setColor(originalColor);
-        }
-    }, [selectedDot]);
-
     return (
         <DotCircle
             cx={cx}
             cy={cy}
             r={7}
-            fill={color}
+            fill={selectedDot.label === payload.label && valueStringify(selectedDot.value) === valueStringify(value) ? '#F4B400' : originalColor}
             onClick={handleDotClick}
         />
     );
