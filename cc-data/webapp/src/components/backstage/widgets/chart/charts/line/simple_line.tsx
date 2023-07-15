@@ -59,18 +59,11 @@ const SimpleLineChart: FC<Props> = ({
     const urlHash = useUrlHash();
 
     useEffect(() => {
-        // const [x, y, label, value] = urlHash.substring(2).replaceAll('dot', '.').split('_');
-        // const xFloat = parseFloat(x);
-        // const yFloat = parseFloat(y);
         const [label, value] = urlHash.substring(5).replaceAll('dot', '.').split('-');
         const valueFloat = parseFloat(value);
-
-        // if (Number.isNaN(xFloat) || Number.isNaN(yFloat) || Number.isNaN(valueFloat)) {
         if (Number.isNaN(valueFloat)) {
             return;
         }
-
-        // setSelectedDot({x: xFloat, y: yFloat, value: valueFloat});
         setSelectedDot((prev) => ({...prev, label, value: valueFloat}));
     }, [urlHash]);
 
@@ -80,6 +73,7 @@ const SimpleLineChart: FC<Props> = ({
     // Another solution to keep the animation is to set the line key to Math.random()_key,
     // but this causes problem for subsequiental re-rendering for the hyperlinking mechanism
     // isRhs ? key : `${Math.random()}_${key}` is used to solve the problem of dots not appearing on first rendering in the dashboard
+    // All of the above comments are solved but now the hyperlink does no work in the dashboard
     return (
         <div
             style={{
