@@ -18,7 +18,10 @@ organizations:
         id: "10"
         url: http://www.isislab.it:3000/cc-data-provider/organizations/1/temperatures
         widgets:
-          - name: World Change
+          - name: Description
+            type: text-box
+            url: http://www.isislab.it:3000/cc-data-provider/organizations/1/temperatures/:id/desc
+          - name: Temperature Change
             type: map
             url: http://www.isislab.it:3000/cc-data-provider/organizations/1/temperatures/:id/map?year=:year
           - type: channel
@@ -26,7 +29,10 @@ organizations:
         id: "11"
         url: http://www.isislab.it:3000/cc-data-provider/organizations/1/dioxide
         widgets:
-          - name: World Concentrations
+          - name: Description
+            type: text-box
+            url: http://www.isislab.it:3000/cc-data-provider/organizations/1/dioxide/:id/desc
+          - name: Dioxide Concentrations
             type: map
             url: http://www.isislab.it:3000/cc-data-provider/organizations/1/dioxide/:id/map?year=:year
           - type: channel
@@ -34,6 +40,9 @@ organizations:
         id: "12"
         url: http://www.isislab.it:3000/cc-data-provider/organizations/1/seas
         widgets:
+          - name: Description
+            type: text-box
+            url: http://www.isislab.it:3000/cc-data-provider/organizations/1/seas/:id/desc
           - name: Sea Levels Change
             type: map
             url: http://www.isislab.it:3000/cc-data-provider/organizations/1/seas/:id/map?year=:year
@@ -46,7 +55,10 @@ organizations:
         id: "13"
         url: http://www.isislab.it:3000/cc-data-provider/organizations/2/temperatures
         widgets:
-          - name: World Change
+          - name: Description
+            type: text-box
+            url: http://www.isislab.it:3000/cc-data-provider/organizations/2/temperatures/:id/desc
+          - name: Temperature Change
             type: chart
             chartType: simple-line
             url: http://www.isislab.it:3000/cc-data-provider/organizations/2/temperatures/:id/chart
