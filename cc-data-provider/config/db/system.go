@@ -13,7 +13,7 @@ func (db *DB) getSystemValue(q queryer, key string) (string, error) {
 
 	err := db.GetBuilder(q, &value,
 		sq.Select("SValue").
-			From("CSFDP_System").
+			From("CCDP_System").
 			Where(sq.Eq{"SKey": key}),
 	)
 	if err == sql.ErrNoRows {
@@ -28,7 +28,7 @@ func (db *DB) getSystemValue(q queryer, key string) (string, error) {
 // setSystemValue updates the IR_System table for the given key.
 func (db *DB) setSystemValue(e queryExecer, key, value string) error {
 	result, err := db.ExecBuilder(e,
-		sq.Update("CSFDP_System").
+		sq.Update("CCDP_System").
 			Set("SValue", value).
 			Where(sq.Eq{"SKey": key}),
 	)
@@ -42,7 +42,7 @@ func (db *DB) setSystemValue(e queryExecer, key, value string) error {
 	}
 
 	_, err = db.ExecBuilder(e,
-		sq.Insert("CSFDP_System").
+		sq.Insert("CCDP_System").
 			Columns("SKey", "SValue").
 			Values(key, value),
 	)

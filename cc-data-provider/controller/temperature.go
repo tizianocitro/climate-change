@@ -159,7 +159,7 @@ func getWorldTemperatureMapData(year string) (model.MapData, error) {
 			Points:       points,
 		},
 		Range:      getTemperatureRangeAcrossYears(records),
-		ColorRange: []string{"#0000ff", "#ff0000"},
+		ColorRange: []string{"#00AACC", "#FF5533"},
 	}, nil
 }
 

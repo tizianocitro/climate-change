@@ -142,7 +142,7 @@ func getWorldSeaData(year string) (model.MapData, error) {
 			Range:            getSeaRangeAcrossYears(records),
 			CountriesColor:   "#8B4513",
 			NoCountriesValue: true,
-			ColorRange:       []string{"#000080", "#87CEEB"},
+			ColorRange:       []string{"#87CEEB", "#000080"},
 		},
 		Points: model.PointData{
 			DefaultPoint: points[len(points)-1],
