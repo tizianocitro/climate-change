@@ -17,7 +17,7 @@ type Props = {
     setPoint: Dispatch<SetStateAction<string>>;
 };
 
-export const getPointFromUrlHash = (urlHash: string): string => urlHash.substring(2).split('_')[0];
+export const getPointFromUrlHash = (urlHash: string): string => urlHash.substring(7).split('-')[0];
 
 export const isInPoints = (data: PointData, point: string): boolean => data.points.some((p) => p.value === point);
 

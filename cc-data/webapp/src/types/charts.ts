@@ -30,3 +30,8 @@ export const defaultDot: LineDot = {
     label: '',
     value: 0.0,
 };
+
+export const isDefaultDot = (dot: LineDot) => {
+    const {x, y, label, value} = dot;
+    return x === 0.0 && y === 0.0 && value === 0.0 && label === '';
+};

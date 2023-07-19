@@ -22,6 +22,7 @@ import {
     LineDot,
     SimpleLineChartData,
     defaultDot,
+    isDefaultDot,
 } from 'src/types/charts';
 import {IsRhsContext} from 'src/components/backstage/sections_widgets/sections_widgets_container';
 
@@ -67,7 +68,7 @@ const SimpleLineChart: FC<Props> = ({
         setSelectedDot((prev) => ({...prev, label, value: valueFloat}));
     }, [urlHash]);
 
-    useScrollIntoView(`#dot-${selectedDot.label}-${valueStringify(selectedDot.value)}-${idStringify(sectionId)}`);
+    useScrollIntoView(isDefaultDot(selectedDot) ? '' : `#dot-${selectedDot.label}-${valueStringify(selectedDot.value)}-${idStringify(sectionId)}`);
 
     // isAnimationActive = false solves the problem of dots not appearing on first rendering
     // Another solution to keep the animation is to set the line key to Math.random()_key,
@@ -92,7 +93,7 @@ const SimpleLineChart: FC<Props> = ({
                     <LineChart
                         id={'simple-line-chart'}
                         width={600}
-                        height={500}
+                        height={300}
                         data={data}
                     >
                         <CartesianGrid strokeDasharray='3 3'/>

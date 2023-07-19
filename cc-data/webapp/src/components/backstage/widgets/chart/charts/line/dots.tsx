@@ -1,14 +1,27 @@
-import React, {FC, useContext} from 'react';
+import React, {
+    FC,
+    useContext,
+    useEffect,
+    useState,
+} from 'react';
 import {useIntl} from 'react-intl';
 import {useRouteMatch} from 'react-router-dom';
 import styled from 'styled-components';
 
+import {Tooltip} from 'antd';
+
 import {formatUrlAsMarkdown} from 'src/components/backstage/header/controls';
 import {useToaster} from 'src/components/backstage/toast_banner';
-import {FullUrlContext} from 'src/components/rhs/rhs';
+import {FullUrlContext, IsRhsClosedContext} from 'src/components/rhs/rhs';
 import {IsEcosystemRhsContext} from 'src/components/rhs/rhs_widgets';
-import {buildQuery, buildTo, buildToForCopy} from 'src/hooks';
+import {
+    buildQuery,
+    buildTo,
+    buildToForCopy,
+    useUrlHash,
+} from 'src/hooks';
 import {copyToClipboard} from 'src/utils';
+import {LineDot} from 'src/types/charts';
 
 export const DOT_PREFIX = 'dot-';
 
@@ -27,19 +40,52 @@ export const idStringify = (id: string): string => {
     return `${id}`.replaceAll('-', 'hpn');
 };
 
+const isDotSelected = (selectedDot: LineDot, label: string, value: number): boolean => {
+    return selectedDot.label === label && valueStringify(selectedDot.value) === valueStringify(value);
+};
+
 type Props = any;
 
 export const Dot: FC<Props> = (props) => {
     const {cx, cy, payload, value, originalColor, selectedDot, sectionId} = props;
 
+    const isRhsClosed = useContext(IsRhsClosedContext);
+    const urlHash = useUrlHash();
+
+    const [open, setOpen] = useState(false);
+    const [color, setColor] = useState(originalColor);
+
+    useEffect(() => {
+        setOpen(false);
+        const timeout = setTimeout(() => {
+            const isSelected = isDotSelected(selectedDot, payload.label, value);
+            setOpen(isSelected);
+            setColor(isSelected ? '#F4B400' : originalColor);
+        }, 100);
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [isRhsClosed, selectedDot, urlHash]);
+
+    // useEffect(() => {
+    //     const isSelected = isDotSelected(selectedDot, payload.label, value);
+    //     setOpen(isSelected);
+    //     setColor(isSelected ? '#F4B400' : originalColor);
+    // }, [selectedDot]);
+
     return (
-        <DotCircle
-            id={`dot-${payload.label}-${valueStringify(value)}-${idStringify(sectionId)}`}
-            cx={cx}
-            cy={cy}
-            r={4}
-            fill={selectedDot.label === payload.label && valueStringify(selectedDot.value) === valueStringify(value) ? '#F4B400' : originalColor}
-        />
+        <Tooltip
+            title={`${payload.label}: ${value}`}
+            open={open}
+        >
+            <DotCircle
+                id={`dot-${payload.label}-${valueStringify(value)}-${idStringify(sectionId)}`}
+                cx={cx}
+                cy={cy}
+                r={4}
+                fill={color}
+            />
+        </Tooltip>
     );
 };
 
@@ -52,8 +98,15 @@ export const ClickableDot: FC<Props> = (props) => {
     const {formatMessage} = useIntl();
     const {add: addToast} = useToaster();
 
+    const [color, setColor] = useState(originalColor);
+
     const ecosystemQuery = isEcosystemRhs ? '' : buildQuery(parentId, sectionId);
     const [,, valueString] = dotStringify(cx, cy, value);
+
+    useEffect(() => {
+        const isSelected = isDotSelected(selectedDot, payload.label, value);
+        setColor(isSelected ? '#F4B400' : originalColor);
+    }, [selectedDot]);
 
     const handleDotClick = (event: any) => {
         const itemId = `dot-${payload.label}-${valueString}-${idStringify(sectionId)}`;
@@ -68,7 +121,7 @@ export const ClickableDot: FC<Props> = (props) => {
             cx={cx}
             cy={cy}
             r={7}
-            fill={selectedDot.label === payload.label && valueStringify(selectedDot.value) === valueStringify(value) ? '#F4B400' : originalColor}
+            fill={color}
             onClick={handleDotClick}
         />
     );
