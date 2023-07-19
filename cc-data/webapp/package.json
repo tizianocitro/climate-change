@@ -36,6 +36,7 @@
     "react-router-hash-link": "2.4.3",
     "react-select": "4.3.1",
     "react-simple-maps": "3.0.0",
+    "react-tooltip": "5.18.0",
     "react-use": "17.3.2",
     "reactflow": "11.5.6",
     "recharts": "2.7.2",
