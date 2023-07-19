@@ -13,19 +13,22 @@ import TextBoxWrapper from './text_box/wrappers/text_box_wrapper';
 import TimelineWrapper from './timeline/wrappers/timeline_wrappers';
 import MapWrapper from './map/wrappers/map_wrapper';
 import {WidgetType} from './widget_types';
+import ChartWrapper from './chart/wrappers/chart_wrapper';
 
 type Props = {
     widgets: Widget[];
 };
 
 const buildWidgetByType = (
-    {name, type, url}: Widget,
+    {name, type, url, chartType}: Widget,
     index: number,
 ): JSX.Element => {
     const key = `${name}-${type}-${index}`;
-    const props = {key, name, url};
+    const props = {key, name, url, chartType};
 
     switch (type) {
+    case WidgetType.Chart:
+        return <ChartWrapper {...props}/>;
     case WidgetType.Graph:
         return <GraphWrapper {...props}/>;
     case WidgetType.PaginatedTable:
