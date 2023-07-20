@@ -19,6 +19,7 @@ import SectionsWidgetsContainer from 'src/components/backstage/sections_widgets/
 import {OrganizationIdContext} from 'src/components/backstage/organizations/organization_details';
 import ScenarioWizard from 'src/components/backstage/widgets/wizard/scenario_wizard';
 
+// import {formatPropertyName} from 'src/helpers';
 //import StepsModal from 'src/components/backstage/widgets/steps_modal/steps_modal';
 
 export const IsEcosystemContext = createContext(false);
@@ -39,16 +40,18 @@ const EcosystemDetails = () => {
                 const result: any = {};
                 for (const organization of organizations) {
                     for (const section of organization.sections) {
+                        // const sectionName = formatPropertyName(section.name);
+                        const sectionName = section.name;
                         const response = await fetch(section.url);
                         const data = await response.json();
                         for (const row of data.rows) {
                             row.organizationId = organization.id;
                             row.parentId = section.id;
                         }
-                        if (result[section.name]) {
-                            result[section.name] = result[section.name].concat(data.rows);
+                        if (result[sectionName]) {
+                            result[sectionName] = result[sectionName].concat(data.rows);
                         } else {
-                            result[section.name] = data.rows;
+                            result[sectionName] = data.rows;
                         }
                     }
                 }
