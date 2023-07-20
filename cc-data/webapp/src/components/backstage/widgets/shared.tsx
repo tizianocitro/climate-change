@@ -72,7 +72,7 @@ export const LinkTitle = styled.h3`
 export const Separator = styled.hr`
     display: flex;
     align-content: center;
-    border-top: 1px solid rgba(var(--center-channel-color-rgb),0.08);
+    border-top: 1px solid rgba(var(--center-channel-color-rgb), 0.08);
     margin: 5px auto;
     width: 100%;
 `;
