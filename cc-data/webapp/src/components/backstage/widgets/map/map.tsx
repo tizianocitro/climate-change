@@ -15,7 +15,7 @@ import {formatName} from 'src/helpers';
 import {MapData, Point, defaultMapData} from 'src/types/map';
 import {Spacer} from 'src/components/backstage/grid';
 
-import WorldMap, {getCountryFromUrlHash} from './world_map';
+import WorldMap from './world_map';
 import PointSelect from './point_select';
 
 type Props = {
@@ -39,7 +39,7 @@ const Map = ({
     const fullUrl = useContext(FullUrlContext);
     const urlHash = useUrlHash();
 
-    const {items, points, range, colorRange} = data;
+    const {items, points, range, colorRange, worldEnv, seaEnv} = data;
 
     const [selectedPoint, setSelectedPoint] = useState<Point>(points.defaultPoint || defaultMapData.points.defaultPoint);
     useEffect(() => {
@@ -52,7 +52,7 @@ const Map = ({
     const id = `${formatName(name)}-${sectionId}-${parentId}-widget`;
     const ecosystemQuery = isEcosystemRhs ? '' : buildQuery(parentId, sectionId);
 
-    useScrollIntoView(getCountryFromUrlHash(urlHash));
+    useScrollIntoView(urlHash);
 
     return (
         <Container
@@ -76,9 +76,11 @@ const Map = ({
                 />
             </Header>
             <WorldMap
-                data={items}
+                countries={items}
                 range={range}
                 colorRange={colorRange}
+                worldEnv={worldEnv}
+                seaEnv={seaEnv}
                 selectedPoint={selectedPoint}
                 parentId={parentId}
                 sectionId={sectionId}

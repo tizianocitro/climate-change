@@ -1,6 +1,5 @@
 import React, {
     FC,
-    MouseEvent,
     useContext,
     useEffect,
     useState,
@@ -17,6 +16,7 @@ import {
 } from 'react-simple-maps';
 import {useRouteMatch} from 'react-router-dom';
 import {scaleLinear} from 'd3-scale';
+import {Tooltip as ReactTooltip} from 'react-tooltip';
 
 import {
     buildQuery,
@@ -30,21 +30,33 @@ import {useToaster} from 'src/components/backstage/toast_banner';
 import {IsEcosystemRhsContext} from 'src/components/rhs/rhs_widgets';
 import {IsRhsContext} from 'src/components/backstage/sections_widgets/sections_widgets_container';
 import {FullUrlContext} from 'src/components/rhs/rhs';
-import {Country, Point} from 'src/types/map';
+import {
+    Country,
+    Point,
+    SeaEnv,
+    WorldEnv,
+    isSeaEnvDefined,
+    isWorldEnvDefined,
+} from 'src/types/map';
 
 import Features from './features.json';
 
 type Props = {
-    data: Country[];
-    range: number[];
-    colorRange: string[];
+    countries?: Country[];
+    range?: number[];
+    colorRange?: string[];
+    worldEnv?: WorldEnv;
+    seaEnv?: SeaEnv;
     selectedPoint: Point;
     parentId: string;
     sectionId: string;
 };
 
+const defaultCountriesColor = '#8B4513';
+const defaultSeaColor = '#87CEEB';
+
 // Removes #_ at the start and then extracts the country ISO3
-export const getCountryFromUrlHash = (urlHash: string): string => urlHash.substring(2).split('_')[1];
+export const getCountryFromUrlHash = (urlHash: string): string => urlHash.substring(7).split('-')[1];
 
 const calcCoordinates = (coordinates: any, type: string): any | null => {
     if (!coordinates) {
@@ -72,10 +84,16 @@ const calcCoordinates = (coordinates: any, type: string): any | null => {
     return [lat / count, long / count];
 };
 
+const getContriesColor = (seaEnv: SeaEnv | undefined): string => {
+    return seaEnv?.countriesColor ? seaEnv?.countriesColor : defaultCountriesColor;
+};
+
 const WorldMap: FC<Props> = ({
-    data,
+    countries,
     range,
     colorRange,
+    worldEnv,
+    seaEnv,
     selectedPoint,
     parentId,
     sectionId,
@@ -86,70 +104,158 @@ const WorldMap: FC<Props> = ({
     const {url} = useRouteMatch();
     const ecosystemQuery = isEcosystemRhs ? '' : buildQuery(parentId, sectionId);
 
-    const [tooltipContent, setTooltipContent] = useState('');
-    const [tooltipPosition, setTooltipPosition] = useState({x: 0, y: 0});
     const [savedGeographies, setSavedGeographies] = useState<any>(null);
     const [selectedCountry, setSelectedCountry] = useState<Country | undefined>();
+    const [geoMap, setGeoMap] = useState<any>({});
+    const [data, setData] = useState<Country[]>(countries || []);
+    useEffect(() => {
+        setData(countries || []);
+    }, [countries]);
 
     const urlHash = useUrlHash();
     const {formatMessage} = useIntl();
     const {add: addToast} = useToaster();
 
-    const colorScale = scaleLinear<string>().domain(range).range(colorRange);
+    const countriesColorScale = scaleLinear<string>().domain(range ?? []).range(colorRange ?? []);
+    const seaColorScale = scaleLinear<string>().
+        domain(seaEnv?.range ?? []).
+        range(seaEnv?.colorRange ?? []);
+    const worldColorScale = scaleLinear<string>().
+        domain(worldEnv?.range ?? []).
+        range(worldEnv?.colorRange ?? []);
 
-    const handleMouseEnter = (event: MouseEvent, geo: any) => {
+    const countriesColor = getContriesColor(seaEnv);
+    const seaColor = seaEnv ? seaColorScale(seaEnv.value) : defaultSeaColor;
+
+    const isWorldEnv = isWorldEnvDefined(worldEnv);
+    const isSeaEnv = isSeaEnvDefined(seaEnv);
+    const isCountriesEnv = !isWorldEnv && !isSeaEnv;
+
+    const getSeaTooltipContent = (): string => {
+        if (!seaEnv) {
+            return '';
+        }
+        const label = seaEnv.label || 'Sea';
+        return `${label}: ${seaEnv.value}`;
+    };
+
+    const getEarthTooltipContent = (geo: any): string => {
+        if (seaEnv && (seaEnv.noCountriesValue || false)) {
+            return '';
+        }
         const {name} = geo.properties;
         const countryData = data.find((country) => country.iso3 === geo.id);
-        if (!countryData) {
-            setTooltipContent(`${name}: unknown`);
+        if (countryData) {
+            return `${name}: ${countryData.value}`;
+        }
+        return isWorldEnv ? `${name}: ${worldEnv?.value}` : `${name}: unknown`;
+    };
+
+    const handleSeaClick = () => {
+        if (!seaEnv) {
             return;
         }
-        setTooltipContent(`${name}: ${countryData.value}`);
+        const label = seaEnv?.label ?? 'sea';
+        const itemId = `sea-${selectedPoint.value}-${sectionId}`;
+        const path = buildToForCopy(buildTo(fullUrl, itemId, ecosystemQuery, url));
+        copyToClipboard(formatUrlAsMarkdown(path, `${label} [${selectedPoint.value}]`));
+        addToast({content: formatMessage({defaultMessage: 'Copied!'})});
     };
 
-    const handleMouseLeave = () => {
-        setTooltipContent('');
-    };
-
-    const handleMouseMove = ({clientX, clientY}: MouseEvent) => {
-        setTooltipPosition({x: clientX, y: clientY});
-    };
-
-    const handleClick = (geo: any) => {
-        const itemId = `_${selectedPoint.value}_${geo.id}`;
+    const handleEarthClick = (geo: any) => {
+        if (isSeaEnv) {
+            return;
+        }
+        const itemId = `mapel-${selectedPoint.value}-${geo.id}-${sectionId}`;
         const path = buildToForCopy(buildTo(fullUrl, itemId, ecosystemQuery, url));
         copyToClipboard(formatUrlAsMarkdown(path, `${geo.properties.name} [${selectedPoint.value}]`));
         addToast({content: formatMessage({defaultMessage: 'Copied!'})});
     };
 
     useEffect(() => {
-        if (!savedGeographies || !urlHash || urlHash.length < 1) {
+        if (!isSeaEnv) {
+            return;
+        }
+        if (!savedGeographies || !urlHash || urlHash.length < 1 || !urlHash.includes(sectionId)) {
+            return;
+        }
+        const countryIso3 = 'MRT';
+        let mapCountry = geoMap.sea;
+        if (!mapCountry) {
+            let hashedCountry = data.find((country) => country.iso3 === countryIso3);
+            const geography = savedGeographies.find((geo: any) => geo.id === countryIso3);
+            const hashedCountryCoordinates = calcCoordinates(
+                geography?.geometry?.coordinates,
+                geography?.geometry?.type,
+            );
+            if (!hashedCountryCoordinates) {
+                return;
+            }
+            if (!hashedCountry) {
+                hashedCountry = {
+                    id: countryIso3,
+                    country: geography?.properties?.name,
+                    iso3: countryIso3,
+                    value: isWorldEnv ? `${worldEnv?.value}` : 'unknown',
+                };
+            }
+            const [lat, long] = hashedCountryCoordinates;
+            mapCountry = {
+                ...hashedCountry,
+                name: 'Sea',
+                coordinates: [lat, long - 30],
+            };
+            setGeoMap((prev: any) => ({...prev, sea: mapCountry}));
+        }
+        setSelectedCountry(mapCountry);
+
+        // Adding urlHash as dependency helps a lot with performances when there is an ecosystem, but prevents hyperlinking to work in dashboard
+        // To make it work also in the dashboard, we used a memoize approach with a cache for the hashed countries.
+        // In this way, we do not have to calculate the coordinates all of that every single time.
+    });
+
+    useEffect(() => {
+        if (isSeaEnv) {
+            return;
+        }
+        if (!savedGeographies || !urlHash || urlHash.length < 1 || !urlHash.includes(sectionId)) {
             return;
         }
         const countryIso3 = getCountryFromUrlHash(urlHash);
-        let hashedCountry = data.find((country) => country.iso3 === countryIso3);
-        const geography = savedGeographies.find((geo: any) => geo.id === countryIso3);
-        const hashedCountryCoordinates = calcCoordinates(
-            geography?.geometry?.coordinates,
-            geography?.geometry?.type);
-        if (!hashedCountryCoordinates) {
-            return;
-        }
-        const name = geography?.properties?.name ?? hashedCountry?.country ?? '';
-        if (!hashedCountry) {
-            hashedCountry = {
-                id: countryIso3,
-                country: geography?.properties?.name,
-                iso3: countryIso3,
-                value: 'unknown',
+        let mapCountry = geoMap[countryIso3];
+        if (!mapCountry) {
+            let hashedCountry = data.find((country) => country.iso3 === countryIso3);
+            const geography = savedGeographies.find((geo: any) => geo.id === countryIso3);
+            const hashedCountryCoordinates = calcCoordinates(
+                geography?.geometry?.coordinates,
+                geography?.geometry?.type,
+            );
+            if (!hashedCountryCoordinates) {
+                return;
+            }
+            const name = geography?.properties?.name ?? hashedCountry?.country ?? '';
+            if (!hashedCountry) {
+                hashedCountry = {
+                    id: countryIso3,
+                    country: geography?.properties?.name,
+                    iso3: countryIso3,
+                    value: isWorldEnv ? `${worldEnv?.value}` : 'unknown',
+                };
+            }
+            mapCountry = {
+                ...hashedCountry,
+                name,
+                coordinates: hashedCountryCoordinates,
             };
-        }
 
-        setSelectedCountry({
-            ...hashedCountry,
-            name,
-            coordinates: hashedCountryCoordinates,
-        });
+            // setGeoMap((prev: any) => ({...prev, [countryIso3]: mapCountry}));
+            geoMap[countryIso3] = mapCountry;
+        }
+        setSelectedCountry(mapCountry);
+
+        // Adding urlHash as dependency helps a lot with performances when there is an ecosystem, but prevents hyperlinking to work in dashboard
+        // To make it work also in the dashboard, we used a memoize approach with a cache for the hashed countries.
+        // In this way, we do not have to calculate the coordinates all of that every single time.
     });
 
     const width = isRhs ? '100%' : '90%';
@@ -160,19 +266,23 @@ const WorldMap: FC<Props> = ({
                 maxWidth: '100%',
                 margin: '0 auto',
             }}
-            onMouseMove={handleMouseMove}
         >
             <ComposableMap>
                 <ZoomableGroup>
                     <Sphere
                         id='world-sphere'
                         stroke='#E4E5E6'
-                        fill='#87CEEB'
+                        fill={seaColor}
                         strokeWidth={0.5}
                     />
                     <Graticule
+                        id={`sea-${selectedPoint.value}-${sectionId}`}
                         stroke='#E4E5E6'
                         strokeWidth={0.5}
+                        data-tooltip-id='sea-tooltip'
+                        data-tooltip-content={getSeaTooltipContent()}
+                        onClick={() => handleSeaClick()}
+                        style={{cursor: isSeaEnv ? 'pointer' : 'auto'}}
                     />
                     <Geographies geography={Features}>
                         {({geographies}) => geographies.map((geo) => {
@@ -180,24 +290,26 @@ const WorldMap: FC<Props> = ({
                                 setSavedGeographies(geographies);
                             }
                             const countryData = data.find((country) => country.iso3 === geo.id);
-                            const color = countryData && typeof countryData.value === 'number' ?
-                                colorScale(countryData.value) :
-                                '#dddddd';
+                            let color = isCountriesEnv && countryData && typeof countryData.value === 'number' ?
+                                countriesColorScale(countryData.value) :
+                                countriesColor;
+                            color = isWorldEnv && worldEnv ? worldColorScale(worldEnv.value) : color;
 
                             return (
                                 <Geography
+                                    id={`mapel-${selectedPoint.value}-${geo.id}-${sectionId}`}
                                     key={geo.rsmKey}
                                     geography={geo}
                                     fill={color}
                                     stroke='#000000'
                                     style={{
                                         hover: {
-                                            cursor: 'pointer',
+                                            cursor: isSeaEnv ? 'auto' : 'pointer',
                                         },
                                     }}
-                                    onClick={() => handleClick(geo)}
-                                    onMouseEnter={(event) => handleMouseEnter(event, geo)}
-                                    onMouseLeave={handleMouseLeave}
+                                    data-tooltip-id='geo-tooltip'
+                                    data-tooltip-content={getEarthTooltipContent(geo)}
+                                    onClick={() => handleEarthClick(geo)}
                                 />
                             );
                         })}
@@ -236,22 +348,8 @@ const WorldMap: FC<Props> = ({
                 </ZoomableGroup>
             </ComposableMap>
 
-            {tooltipContent &&
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: tooltipPosition.y - 40,
-                        left: tooltipPosition.x - 5,
-                        background: '#FFFFFF',
-                        padding: '5px 10px',
-                        borderRadius: 5,
-                        pointerEvents: 'none',
-                        zIndex: 9999,
-                    }}
-                >
-                    {tooltipContent}
-                </div>
-            }
+            <ReactTooltip id='geo-tooltip'/>
+            <ReactTooltip id='sea-tooltip'/>
         </div>
     );
 };
