@@ -1,8 +1,10 @@
 export type MapData = {
-    items: Country[];
+    items?: Country[];
     points: PointData;
-    range: number[];
-    colorRange: string[];
+    range?: number[];
+    colorRange?: string[];
+    worldEnv?: WorldEnv;
+    seaEnv?: SeaEnv;
 };
 
 export type Country = {
@@ -24,6 +26,21 @@ export type Point = {
     label: string;
 };
 
+export type WorldEnv = {
+    value: number;
+    range: number[];
+    colorRange: string[];
+};
+
+export type SeaEnv = {
+    label?: string;
+    value: number;
+    countriesColor?: string;
+    noCountriesValue?: boolean;
+    range: number[];
+    colorRange: string[];
+};
+
 export const defaultMapData: MapData = {
     items: [],
     points: {
@@ -35,4 +52,21 @@ export const defaultMapData: MapData = {
     },
     range: [0, 0],
     colorRange: ['', ''],
+};
+
+export const isWorldEnvDefined = (worldEnv: WorldEnv | undefined): boolean => {
+    if (!worldEnv) {
+        return false;
+    }
+    const {colorRange, range} = worldEnv;
+    if (!colorRange || colorRange.length < 1) {
+        return false;
+    }
+    return range && range.length > 0;
+};
+
+export const isSeaEnvDefined = (seaEnv: SeaEnv | undefined): boolean => {
+    return seaEnv ?
+        typeof seaEnv.countriesColor !== 'undefined' :
+        false;
 };
