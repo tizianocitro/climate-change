@@ -17,7 +17,14 @@ type Props = {
     setPoint: Dispatch<SetStateAction<string>>;
 };
 
-export const getPointFromUrlHash = (urlHash: string): string => urlHash.substring(7).split('-')[0];
+export const getPointFromUrlHash = (urlHash: string): string => {
+    if (urlHash.includes('mapel-')) {
+        return urlHash.substring(7).split('-')[0];
+    }
+
+    // It's sea env
+    return urlHash.substring(5).split('-')[0];
+};
 
 export const isInPoints = (data: PointData, point: string): boolean => data.points.some((p) => p.value === point);
 
