@@ -15,7 +15,7 @@ import {formatName} from 'src/helpers';
 import {MapData, Point, defaultMapData} from 'src/types/map';
 import {Spacer} from 'src/components/backstage/grid';
 
-import WorldMap from './world_map';
+import WorldMap, {getUrlHashForWorldMap} from './world_map';
 import PointSelect from './point_select';
 
 type Props = {
@@ -52,7 +52,7 @@ const Map = ({
     const id = `${formatName(name)}-${sectionId}-${parentId}-widget`;
     const ecosystemQuery = isEcosystemRhs ? '' : buildQuery(parentId, sectionId);
 
-    useScrollIntoView(urlHash);
+    useScrollIntoView(getUrlHashForWorldMap(urlHash));
 
     return (
         <Container

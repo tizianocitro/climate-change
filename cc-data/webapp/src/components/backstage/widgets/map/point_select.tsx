@@ -21,9 +21,11 @@ export const getPointFromUrlHash = (urlHash: string): string => {
     if (urlHash.includes('mapel-')) {
         return urlHash.substring(7).split('-')[0];
     }
-
-    // It's sea env
-    return urlHash.substring(5).split('-')[0];
+    if (urlHash.includes('sea-')) {
+        // It's sea env
+        return urlHash.substring(5).split('-')[0];
+    }
+    return urlHash;
 };
 
 export const isInPoints = (data: PointData, point: string): boolean => data.points.some((p) => p.value === point);

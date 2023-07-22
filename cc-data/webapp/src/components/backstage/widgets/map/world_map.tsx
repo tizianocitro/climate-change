@@ -58,6 +58,21 @@ const defaultSeaColor = '#87CEEB';
 // Removes #_ at the start and then extracts the country ISO3
 export const getCountryFromUrlHash = (urlHash: string): string => urlHash.substring(7).split('-')[1];
 
+export const getUrlHashForWorldMap = (urlHash: string): string => {
+    let prefix = '';
+    let segments: string[] = [];
+    if (urlHash.includes('mapel-')) {
+        prefix = urlHash.substring(0, 7);
+        segments = urlHash.substring(7).split('-');
+    }
+    if (urlHash.includes('sea-')) {
+        prefix = urlHash.substring(0, 5);
+        segments = urlHash.substring(5).split('-');
+    }
+    const worldMapHash = `${prefix}${segments.slice(1).join('-')}`;
+    return prefix !== '' && segments.length > 0 ? worldMapHash : urlHash;
+};
+
 const calcCoordinates = (coordinates: any, type: string): any | null => {
     if (!coordinates) {
         return null;
@@ -173,10 +188,10 @@ const WorldMap: FC<Props> = ({
     };
 
     useEffect(() => {
-        if (!isSeaEnv) {
+        if (!savedGeographies || !urlHash || urlHash.length < 1 || !urlHash.includes(sectionId)) {
             return;
         }
-        if (!savedGeographies || !urlHash || urlHash.length < 1 || !urlHash.includes(sectionId)) {
+        if (!isSeaEnv) {
             return;
         }
         const countryIso3 = 'MRT';
@@ -215,10 +230,10 @@ const WorldMap: FC<Props> = ({
     });
 
     useEffect(() => {
-        if (isSeaEnv) {
+        if (!savedGeographies || !urlHash || urlHash.length < 1 || !urlHash.includes(sectionId)) {
             return;
         }
-        if (!savedGeographies || !urlHash || urlHash.length < 1 || !urlHash.includes(sectionId)) {
+        if (isSeaEnv) {
             return;
         }
         const countryIso3 = getCountryFromUrlHash(urlHash);
@@ -276,7 +291,7 @@ const WorldMap: FC<Props> = ({
                         strokeWidth={0.5}
                     />
                     <Graticule
-                        id={`sea-${selectedPoint.value}-${sectionId}`}
+                        id={`sea-${sectionId}`}
                         stroke='#E4E5E6'
                         strokeWidth={0.5}
                         data-tooltip-id='sea-tooltip'
@@ -297,7 +312,7 @@ const WorldMap: FC<Props> = ({
 
                             return (
                                 <Geography
-                                    id={`mapel-${selectedPoint.value}-${geo.id}-${sectionId}`}
+                                    id={`mapel-${geo.id}-${sectionId}`}
                                     key={geo.rsmKey}
                                     geography={geo}
                                     fill={color}
