@@ -2,11 +2,13 @@ import React, {
     Dispatch,
     FC,
     SetStateAction,
+    useContext,
     useEffect,
 } from 'react';
 import {Select} from 'antd';
 import {useIntl} from 'react-intl';
 
+import {IsRhsContext} from 'src/components/backstage/sections_widgets/sections_widgets_container';
 import {Point, PointData} from 'src/types/map';
 import {useUrlHash} from 'src/hooks';
 
@@ -36,6 +38,7 @@ const PointSelect: FC<Props> = ({
     setSelectedPoint,
     setPoint,
 }) => {
+    const isRhs = useContext(IsRhsContext);
     const {formatMessage} = useIntl();
     const urlHash = useUrlHash();
 
@@ -62,12 +65,12 @@ const PointSelect: FC<Props> = ({
     };
 
     const {points} = data;
-
+    const width = isRhs ? 125 : 200;
     return (
         <Select
             value={selectedPoint.value}
             showSearch={true}
-            style={{width: 200}}
+            style={{width}}
             placeholder={formatMessage({defaultMessage: 'Search or select a year'})}
             optionFilterProp='children'
             filterOption={filterOption}

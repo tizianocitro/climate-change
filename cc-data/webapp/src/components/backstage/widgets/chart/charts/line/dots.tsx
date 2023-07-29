@@ -49,6 +49,7 @@ type Props = any;
 export const Dot: FC<Props> = (props) => {
     const {cx, cy, payload, value, originalColor, selectedDot, sectionId} = props;
 
+    const isEcosystemRhs = useContext(IsEcosystemRhsContext);
     const isRhsClosed = useContext(IsRhsClosedContext);
     const urlHash = useUrlHash();
 
@@ -57,13 +58,18 @@ export const Dot: FC<Props> = (props) => {
 
     useEffect(() => {
         setOpen(false);
-        const timeout = setTimeout(() => {
+
+        // Time depends on the time needed for a scrool, in ecosystem rhs it needs more
+        const ms = isEcosystemRhs ? 1000 : 500;
+
+        const urlHashTimeout = setTimeout(() => {
             const isSelected = isDotSelected(selectedDot, payload.label, value);
             setOpen(isSelected);
             setColor(isSelected ? '#F4B400' : originalColor);
-        }, 100);
+        }, ms); // timeout has to be higher than the one for scrolling, otherwise the tooltip won't be in the right position after scroll
+
         return () => {
-            clearTimeout(timeout);
+            clearTimeout(urlHashTimeout);
         };
     }, [isRhsClosed, selectedDot, urlHash]);
 
@@ -73,6 +79,16 @@ export const Dot: FC<Props> = (props) => {
     //     setColor(isSelected ? '#F4B400' : originalColor);
     // }, [selectedDot]);
 
+    // title={() => (
+    //     <>
+    //         <p>{`${payload.label}: ${value}`}</p>
+    //         <FingerPointingIcon
+    //             id={`chart-finger-${payload.label}-${valueStringify(value)}-${idStringify(sectionId)}`}
+    //             style={style}
+    //         />
+    //     </>
+    // )}
+    // id={`tooltip-${payload.label}-${valueStringify(value)}-${idStringify(sectionId)}`}
     return (
         <Tooltip
             title={`${payload.label}: ${value}`}
@@ -110,7 +126,7 @@ export const ClickableDot: FC<Props> = (props) => {
 
     const handleDotClick = (event: any) => {
         const itemId = `dot-${payload.label}-${valueString}-${idStringify(sectionId)}`;
-        const name = `${payload.label}: ${value}`;
+        const name = `${payload.label}`;
         const path = buildToForCopy(buildTo(fullUrl, itemId, ecosystemQuery, url));
         copyToClipboard(formatUrlAsMarkdown(path, name));
         addToast({content: formatMessage({defaultMessage: 'Copied!'})});
