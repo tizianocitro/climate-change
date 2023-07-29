@@ -60,6 +60,9 @@ const SimpleLineChart: FC<Props> = ({
     const urlHash = useUrlHash();
 
     useEffect(() => {
+        if (!urlHash.includes(idStringify(sectionId))) {
+            return;
+        }
         const [label, value] = urlHash.substring(5).replaceAll('dot', '.').split('-');
         const valueFloat = parseFloat(value);
         if (Number.isNaN(valueFloat)) {
@@ -77,6 +80,7 @@ const SimpleLineChart: FC<Props> = ({
     // All of the above comments are solved but now the hyperlink does no work in the dashboard
     return (
         <div
+            id={`chart-container-${idStringify(sectionId)}`}
             style={{
                 width: '95%',
                 maxWidth: '100%',
@@ -86,9 +90,9 @@ const SimpleLineChart: FC<Props> = ({
         >
             {data && data.length > 0 &&
                 <ResponsiveContainer
-                    id={`chart-container-${idStringify(sectionId)}`}
                     width='100%'
                     height='100%'
+                    debounce={1} // Fixes the resize observer error
                 >
                     <LineChart
                         id={'simple-line-chart'}
