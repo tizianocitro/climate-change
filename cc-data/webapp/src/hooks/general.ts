@@ -15,7 +15,7 @@ import {useIntl} from 'react-intl';
 import {useSelector} from 'react-redux';
 import {useUpdateEffect} from 'react-use';
 
-import {FetchChannelsParams, WidgetChannel} from 'src/types/channels';
+import {FetchChannelsParams, WidgetChannel, notFoundWidgetChannel} from 'src/types/channels';
 import {
     FetchOrganizationsParams,
     Organization,
@@ -458,9 +458,13 @@ export const useChannelById = (channelId: string): WidgetChannel => {
     useEffect(() => {
         let isCanceled = false;
         async function fetchChannelsAsync() {
-            const channelReturn = await fetchChannelById(channelId);
-            if (!isCanceled) {
-                setChannel(channelReturn.channel);
+            try {
+                const channelReturn = await fetchChannelById(channelId);
+                if (!isCanceled) {
+                    setChannel(channelReturn.channel);
+                }
+            } catch (err: any) {
+                setChannel(notFoundWidgetChannel);
             }
         }
 
