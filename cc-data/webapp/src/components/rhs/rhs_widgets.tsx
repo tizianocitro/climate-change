@@ -62,7 +62,7 @@ const RHSWidgets = (props: Props) => {
                     url={fullUrl}
                     widgets={section?.widgets}
                 />}
-            {(!section || !sectionInfo) && <FormattedMessage defaultMessage='The channel is not related to any section.'/>}
+            {(!section || !sectionInfo) && <FormattedMessage defaultMessage='The channel is not related to any data.'/>}
         </Container>
     );
 };
