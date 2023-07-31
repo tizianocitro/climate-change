@@ -9,7 +9,7 @@ organizations:
         id: "0"
         url: http://localhost:3000/cc-data-provider/issues
         widgets:
-          - type: channel
+          - type: channels
   - name: IMF Climate Data
     id: "1"
     description: The organization at https://climatedata.imf.org/pages/climatechange-data
@@ -24,7 +24,7 @@ organizations:
           - name: Temperature Change
             type: map
             url: http://localhost:3000/cc-data-provider/organizations/1/temperatures/:id/map?year=:year
-          - type: channel
+          - type: channels
       - name: Atmospheric Carbon Dioxide Concentrations
         id: "11"
         url: http://localhost:3000/cc-data-provider/organizations/1/dioxide
@@ -35,7 +35,7 @@ organizations:
           - name: Dioxide Concentrations
             type: map
             url: http://localhost:3000/cc-data-provider/organizations/1/dioxide/:id/map?year=:year
-          - type: channel
+          - type: channels
       - name: Change In Mean Sea Levels
         id: "12"
         url: http://localhost:3000/cc-data-provider/organizations/1/seas
@@ -46,7 +46,7 @@ organizations:
           - name: Sea Levels Change
             type: map
             url: http://localhost:3000/cc-data-provider/organizations/1/seas/:id/map?year=:year
-          - type: channel
+          - type: channels
   - name: Data World
     id: "2"
     description: The organization at https://data.world
@@ -62,4 +62,4 @@ organizations:
             type: chart
             chartType: simple-line
             url: http://localhost:3000/cc-data-provider/organizations/2/temperatures/:id/chart
-          - type: channel
+          - type: channels
