@@ -83,6 +83,10 @@ func useOrganizationsDioxide(organizations fiber.Router) {
 		log.Printf("GET /:organizationId/dioxide/:dioxideId/map called")
 		return dioxideController.GetDioxideMap(c)
 	})
+	dioxideWithId.Get("/chart", func(c *fiber.Ctx) error {
+		log.Printf("GET /:organizationId/dioxide/:dioxideId/chart called")
+		return dioxideController.GetDioxideChart(c)
+	})
 }
 
 func useOrganizationsSea(organizations fiber.Router) {
