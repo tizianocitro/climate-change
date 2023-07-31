@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/csv"
 	"math"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -68,6 +69,21 @@ func (dc *DioxideController) GetDioxideMap(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(model.MapData{})
+}
+
+func (dc *DioxideController) GetDioxideChart(c *fiber.Ctx) error {
+	dioxide := getDioxideByID(c)
+	if dioxide == (model.Dioxide{}) {
+		return c.JSON(model.SimpleLineChartData{})
+	}
+	if dioxide.Name == "World" {
+		chartData, err := getDioxidedChartData()
+		if err != nil {
+			return err
+		}
+		return c.JSON(chartData)
+	}
+	return c.JSON(model.SimpleLineChartData{})
 }
 
 func getDioxideByID(c *fiber.Ctx) model.Dioxide {
@@ -198,6 +214,72 @@ func isYearInDioxiteRange(year string) bool {
 		return false
 	}
 	return yearAsNumber >= 1958 && yearAsNumber <= 2022
+}
+
+func getDioxidedChartData() (model.SimpleLineChartData, error) {
+	filePath, err := util.GetEmbeddedFilePathByName("atmospheric_dioxide_concentrations.csv")
+	if err != nil {
+		return model.SimpleLineChartData{}, err
+	}
+	file, err := data.Data.Open(filePath)
+	if err != nil {
+		return model.SimpleLineChartData{}, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return model.SimpleLineChartData{}, err
+	}
+
+	yearAverages := make(map[string]model.YearAverage)
+	for index, row := range records {
+		unit := row[5]
+		if index == 0 || unit == "Percent" {
+			continue
+		}
+		value := row[11]
+		valueAsNumber, err := strconv.ParseFloat(value, 64)
+		if err != nil {
+			continue
+		}
+		date := row[10]
+		year := date[:4]
+		if year > "2022" {
+			continue
+		}
+		if yearAverage, ok := yearAverages[year]; ok {
+			yearAverages[year] = model.YearAverage{
+				Sum:     yearAverage.Sum + valueAsNumber,
+				Divider: yearAverage.Divider + 1,
+			}
+			continue
+		}
+		yearAverages[year] = model.YearAverage{
+			Sum:     valueAsNumber,
+			Divider: 1,
+		}
+	}
+
+	lines := []model.SimpleLineChartValue{}
+	for key, value := range yearAverages {
+		lines = append(lines, model.SimpleLineChartValue{
+			Label: key,
+			St:    value.Sum / float64(value.Divider),
+		})
+	}
+
+	sort.Slice(lines, func(i, j int) bool {
+		return lines[i].Label < lines[j].Label
+	})
+
+	return model.SimpleLineChartData{
+		LineData: lines,
+		LineColor: model.LineColor{
+			St: "#636363",
+		},
+	}, nil
 }
 
 var dioxideMap = map[string][]model.Dioxide{
