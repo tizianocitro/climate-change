@@ -19,7 +19,6 @@ export const useHideOptions = () => {
 const hideOptions = (): NodeJS.Timeout[][] => {
     (document.getElementsByClassName('AddChannelDropdown_dropdownButton')[0] as HTMLElement).style.display = 'none';
 
-    // TODO: discuss why this causes an error in Mozilla
     const hiddenIconBox = document.getElementById('hidden-icon')?.parentElement?.parentElement;
     if (hiddenIconBox) {
         hiddenIconBox.style.display = 'none';
@@ -47,6 +46,16 @@ const hideOptions = (): NodeJS.Timeout[][] => {
         const offTopic = document.getElementById('sidebarItem_off-topic')?.parentElement;
         if (offTopic) {
             offTopic.style.display = 'none';
+        }
+
+        // Disable writing text-box
+        const replyTextbox = document.getElementById('reply_textbox');
+        if (replyTextbox) {
+            (replyTextbox as HTMLInputElement).disabled = true;
+        }
+        const postTextbox = document.getElementById('post_textbox');
+        if (postTextbox) {
+            (postTextbox as HTMLInputElement).disabled = true;
         }
     }, estimatedOptionsLoadTime);
 
