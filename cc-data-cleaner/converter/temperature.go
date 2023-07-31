@@ -63,6 +63,44 @@ func (tc *TemperatureConverter) ConvertAnnualSurfaceTemperature(inputPath string
 	}, nil
 }
 
+func (tc *TemperatureConverter) ConvertAnnualSurfaceTemperatureForGoogleLooker(inputPath string) (model.WritableData, error) {
+	file, err := os.Open(inputPath)
+	if err != nil {
+		return model.WritableData{}, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return model.WritableData{}, err
+	}
+
+	temperatureHeader := []string{"Country", "Temperature", "Year"}
+	temperatureRows := [][]string{}
+	for i := firstYear; i <= lastYear; i++ {
+		for index, row := range records {
+			if index == 0 {
+				continue
+			}
+			country := row[1]
+			yearRow := []string{country}
+			yearIndex := getYearIndex(strconv.Itoa(i))
+			rowYear := row[yearIndex]
+			if rowYear == "" {
+				rowYear = "0"
+			}
+			yearRow = append(yearRow, rowYear, strconv.Itoa(i))
+			temperatureRows = append(temperatureRows, yearRow)
+		}
+	}
+
+	return model.WritableData{
+		Header: temperatureHeader,
+		Rows:   temperatureRows,
+	}, nil
+}
+
 func (tc *TemperatureConverter) ConvertSurfaceTemperatureCO2(inputPath string) (model.WritableData, error) {
 	file, err := os.Open(inputPath)
 	if err != nil {
@@ -117,6 +155,31 @@ func (tc *TemperatureConverter) ConvertSurfaceTemperatureCO2(inputPath string) (
 		Header: []string{"Year", "SurfaceTemperatureChange"},
 		Rows:   temperatureRows,
 	}, nil
+}
+
+func (tc *TemperatureConverter) GetCountriesNames(inputPath string) ([]string, error) {
+	file, err := os.Open(inputPath)
+	if err != nil {
+		return []string{}, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return []string{}, err
+	}
+
+	countries := []string{}
+	for index, row := range records {
+		if index == 0 {
+			continue
+		}
+		country := row[1]
+		countries = append(countries, country)
+	}
+
+	return countries, nil
 }
 
 func getYearIndex(year string) int {
