@@ -22,6 +22,7 @@ import {
     buildQuery,
     buildTo,
     buildToForCopy,
+    isUrlHashValid,
     useUrlHash,
 } from 'src/hooks';
 import {copyToClipboard} from 'src/utils';
@@ -56,10 +57,29 @@ type Props = {
 const defaultCountriesColor = '#8B4513';
 const defaultSeaColor = '#87CEEB';
 
-// Removes #_ at the start and then extracts the country ISO3
-export const getCountryFromUrlHash = (urlHash: string): string => urlHash.substring(7).split('-')[1];
+// Extracts the country ISO3.
+// At a certain point the url hash is modified by getUrlHashForWorldMap() to provide the correct hash for useScrollIntoView().
+// This is way we don't use the point in the url hash, because it has been removed by getUrlHashForWorldMap().
+export const getCountryFromUrlHashWithoutPoint = (urlHash: string): string => {
+    const urlHashNoPrefix = urlHash.substring(7);
+    const segments = urlHashNoPrefix.split('-');
+    const iso3OrPoint = segments[0];
 
-export const getUrlHashForWorldMap = (urlHash: string): string => {
+    // If it's not 3 characters long, then it's the point, otherwise it's the ISO3
+    if (iso3OrPoint.length !== 3) {
+        return segments[1];
+    }
+    return iso3OrPoint;
+};
+
+export const getUrlHashForWorldMap = (
+    urlHash: string,
+    sectionId: string,
+    isRhs: boolean,
+): string => {
+    if (!isUrlHashValid(urlHash, [sectionId], ['mapel-', 'sea-'])) {
+        return urlHash;
+    }
     let prefix = '';
     let segments: string[] = [];
     if (urlHash.includes('mapel-')) {
@@ -70,7 +90,18 @@ export const getUrlHashForWorldMap = (urlHash: string): string => {
         prefix = urlHash.substring(0, 5);
         segments = urlHash.substring(5).split('-');
     }
-    const worldMapHash = `${prefix}${segments.slice(1).join('-')}`;
+    if (segments.length < 2) {
+        return '';
+    }
+    let worldMapHash = '';
+    if (isRhs) {
+        worldMapHash = `${prefix}${segments.slice(1).join('-')}`;
+    } else { // prevent losing country ISO3 in url hash when in dashboard
+        worldMapHash = `${prefix}${segments.join('-')}`;
+        if (segments[0].length !== 3) {
+            worldMapHash = `${prefix}${segments.slice(1).join('-')}`;
+        }
+    }
     return prefix !== '' && segments.length > 0 ? worldMapHash : urlHash;
 };
 
@@ -102,6 +133,15 @@ const calcCoordinates = (coordinates: any, type: string): any | null => {
 
 const getContriesColor = (seaEnv: SeaEnv | undefined): string => {
     return seaEnv?.countriesColor ? seaEnv?.countriesColor : defaultCountriesColor;
+};
+
+const getCountryValue = (countries: Country[], countryIso3: string): string | number => {
+    let value: string | number = 'unknown';
+    const countryForValue = countries.find((country) => country.iso3 === countryIso3);
+    if (countryForValue) {
+        value = countryForValue.value;
+    }
+    return value;
 };
 
 const getLegendData = (
@@ -157,9 +197,6 @@ const WorldMap: FC<Props> = ({
     const [selectedCountry, setSelectedCountry] = useState<Country | undefined>();
     const [geoMap, setGeoMap] = useState<any>({});
     const [data, setData] = useState<Country[]>(countries || []);
-    useEffect(() => {
-        setData(countries || []);
-    }, [countries]);
 
     const urlHash = useUrlHash();
     const {formatMessage} = useIntl();
@@ -223,98 +260,97 @@ const WorldMap: FC<Props> = ({
         addToast({content: formatMessage({defaultMessage: 'Copied!'})});
     };
 
-    useEffect(() => {
-        if (!savedGeographies || !urlHash || urlHash.length < 1 || !urlHash.includes(sectionId)) {
+    const getCountryFromMap = (
+        countryIso3: string,
+        mapEntry: string,
+    ): Country | null => {
+        let mapCountry = geoMap[mapEntry];
+        if (mapCountry) {
+            return mapCountry;
+        }
+        let hashedCountry = data.find((country) => country.iso3 === countryIso3);
+        const geography = savedGeographies.find((geo: any) => geo.id === countryIso3);
+        const hashedCountryCoordinates = calcCoordinates(
+            geography?.geometry?.coordinates,
+            geography?.geometry?.type,
+        );
+        if (!hashedCountryCoordinates) {
+            return null;
+        }
+
+        let name = geography?.properties?.name ?? hashedCountry?.country ?? '';
+        name = isSeaEnv ? 'Sea' : name;
+
+        // TODO: maybe value can just be set to empty string here
+        let value = isWorldEnv ? `${worldEnv?.value}` : 'unknown';
+        value = isSeaEnv ? `${seaEnv?.value}` : 'unknown';
+        if (!hashedCountry) {
+            hashedCountry = {
+                id: countryIso3,
+                country: geography?.properties?.name,
+                iso3: countryIso3,
+                value,
+            };
+        }
+
+        mapCountry = {
+            ...hashedCountry,
+            name,
+            coordinates: hashedCountryCoordinates,
+        };
+        setGeoMap((prev: any) => ({...prev, [mapEntry]: mapCountry}));
+        return mapCountry;
+    };
+
+    const updateSelectedCountry = (currentCountries: Country[]): void => {
+        if (!isUrlHashValid(urlHash, [sectionId], ['mapel-', 'sea-'])) {
             return;
         }
-        if (!isSeaEnv) {
+        if (!savedGeographies) {
             return;
         }
-        const countryIso3 = 'MRT';
-        let mapCountry = geoMap.sea;
-        if (!mapCountry) {
-            let hashedCountry = data.find((country) => country.iso3 === countryIso3);
-            const geography = savedGeographies.find((geo: any) => geo.id === countryIso3);
-            const hashedCountryCoordinates = calcCoordinates(
-                geography?.geometry?.coordinates,
-                geography?.geometry?.type,
-            );
-            if (!hashedCountryCoordinates) {
+        if (isSeaEnv && seaEnv) {
+            const seaIso3 = 'MRT';
+            const seaCountry = getCountryFromMap(seaIso3, 'sea');
+            if (!seaCountry) {
                 return;
             }
-            if (!hashedCountry) {
-                hashedCountry = {
-                    id: countryIso3,
-                    country: geography?.properties?.name,
-                    iso3: countryIso3,
-                    value: isWorldEnv ? `${worldEnv?.value}` : 'unknown',
-                };
-            }
-            const [lat, long] = hashedCountryCoordinates;
-            mapCountry = {
-                ...hashedCountry,
-                name: 'Sea',
-                coordinates: [lat, long - 30],
-            };
-            setGeoMap((prev: any) => ({...prev, sea: mapCountry}));
-        }
-        setSelectedCountry(mapCountry);
-
-        // Adding urlHash as dependency helps a lot with performances when there is an ecosystem, but prevents hyperlinking to work in dashboard
-        // To make it work also in the dashboard, we used a memoize approach with a cache for the hashed countries.
-        // In this way, we do not have to calculate the coordinates all of that every single time.
-    });
-
-    useEffect(() => {
-        if (!savedGeographies || !urlHash || urlHash.length < 1 || !urlHash.includes(sectionId)) {
+            setSelectedCountry({...seaCountry, value: seaEnv.value});
             return;
         }
-        if (isSeaEnv) {
-            return;
-        }
-        const countryIso3 = getCountryFromUrlHash(urlHash);
-        let mapCountry = geoMap[countryIso3];
-        if (!mapCountry) {
-            let hashedCountry = data.find((country) => country.iso3 === countryIso3);
-            const geography = savedGeographies.find((geo: any) => geo.id === countryIso3);
-            const hashedCountryCoordinates = calcCoordinates(
-                geography?.geometry?.coordinates,
-                geography?.geometry?.type,
-            );
-            if (!hashedCountryCoordinates) {
+        if (isWorldEnv && worldEnv) {
+            const worldIso3 = getCountryFromUrlHashWithoutPoint(urlHash);
+            const worldCountry = getCountryFromMap(worldIso3, worldIso3);
+            if (!worldCountry) {
                 return;
             }
-            const name = geography?.properties?.name ?? hashedCountry?.country ?? '';
-            if (!hashedCountry) {
-                hashedCountry = {
-                    id: countryIso3,
-                    country: geography?.properties?.name,
-                    iso3: countryIso3,
-                    value: isWorldEnv ? `${worldEnv?.value}` : 'unknown',
-                };
-            }
-            mapCountry = {
-                ...hashedCountry,
-                name,
-                coordinates: hashedCountryCoordinates,
-            };
-
-            // setGeoMap((prev: any) => ({...prev, [countryIso3]: mapCountry}));
-            geoMap[countryIso3] = mapCountry;
+            setSelectedCountry({...worldCountry, value: worldEnv.value});
+            return;
         }
+        const countryIso3 = getCountryFromUrlHashWithoutPoint(urlHash);
+        const country = getCountryFromMap(countryIso3, countryIso3);
+        if (!country) {
+            return;
+        }
+        const value = getCountryValue(currentCountries, countryIso3);
+        setSelectedCountry({...country, value});
+    };
 
-        // Updates the value but keeps coordinates and other properties in cache
-        // const countryForValue = data.find((country) => country.iso3 === countryIso3);
-        // if (!countryForValue) {
-        //     return;
-        // }
-        // setSelectedCountry({...mapCountry, value: countryForValue.value});
-        setSelectedCountry(mapCountry);
+    useEffect(() => {
+        setData(countries || []);
+        updateSelectedCountry(countries || []);
+    }, [countries]);
 
-        // Adding urlHash as dependency helps a lot with performances when there is an ecosystem, but prevents hyperlinking to work in dashboard
-        // To make it work also in the dashboard, we used a memoize approach with a cache for the hashed countries.
-        // In this way, we do not have to calculate the coordinates all of that every single time.
-    });
+    useEffect(() => {
+        updateSelectedCountry(data);
+    }, [worldEnv, seaEnv]);
+
+    // Adding urlHash as dependency helps a lot with performances when there is an ecosystem, but prevents hyperlinking to work in dashboard
+    // To make it work also in the dashboard, we used a memoize approach with a cache for the hashed countries.
+    // In this way, we do not have to calculate the coordinates all of that every single time.
+    useEffect(() => {
+        updateSelectedCountry(data);
+    }, [urlHash]);
 
     const width = isRhs ? '100%' : '90%';
     return (
@@ -387,7 +423,7 @@ const WorldMap: FC<Props> = ({
                                 x={!selectedCountry.name || selectedCountry.name.length <= 14 ? '-50' : '-100'}
                                 y='-11'
                                 width={!selectedCountry.name || selectedCountry.name.length <= 14 ? '100' : '200'}
-                                height='20'
+                                height='40'
                                 rx='5'
                                 ry='5'
                                 fill='#FFFFFF'
@@ -399,8 +435,20 @@ const WorldMap: FC<Props> = ({
                                 alignmentBaseline='middle'
                                 style={{fill: '#000000'}}
                             >
+                                {/* {selectedCountry.name} */}
                                 {/* {`${selectedCountry.name}: ${isSeaEnv ? seaEnv?.value : selectedCountry.value}`} */}
-                                {selectedCountry.name}
+                                <tspan
+                                    x='0'
+                                    dy='0'
+                                >
+                                    {selectedCountry.name}
+                                </tspan>
+                                <tspan
+                                    x='0'
+                                    dy='20'
+                                >
+                                    {isSeaEnv ? seaEnv?.value : selectedCountry.value}
+                                </tspan>
                             </text>
                         </Annotation>
                     }
