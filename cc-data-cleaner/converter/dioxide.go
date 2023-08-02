@@ -75,3 +75,66 @@ func (dc *DioxideConverter) ConvertDioxideConcentrations(inputPath string) (mode
 		Rows:   dioxideRows,
 	}, nil
 }
+
+func (dc *DioxideConverter) ConvertDioxideConcentrationsForGoogleLooker(inputPath string) (model.WritableData, error) {
+	file, err := os.Open(inputPath)
+	if err != nil {
+		return model.WritableData{}, err
+	}
+	defer file.Close()
+
+	countries, err := NewTemperatureConverter().
+		GetCountriesNames("../cc-data-provider/data/annual_surface_temperature_change.csv")
+	if err != nil {
+		return model.WritableData{}, err
+	}
+
+	reader := csv.NewReader(file)
+	records, err := reader.ReadAll()
+	if err != nil {
+		return model.WritableData{}, err
+	}
+
+	dioxideHeader := []string{"Country", "Concentration", "Year"}
+
+	yearAverages := make(map[string]model.Average)
+	for index, row := range records {
+		unit := row[5]
+		if index == 0 || unit == "Percent" {
+			continue
+		}
+		value := row[11]
+		valueAsNumber, err := strconv.ParseFloat(value, 64)
+		if err != nil {
+			continue
+		}
+		date := row[10]
+		year := date[:4]
+		if yearAverage, ok := yearAverages[year]; ok {
+			yearAverages[year] = model.Average{
+				Sum:     yearAverage.Sum + valueAsNumber,
+				Divider: yearAverage.Divider + 1,
+			}
+			continue
+		}
+		yearAverages[year] = model.Average{
+			Sum:     valueAsNumber,
+			Divider: 1,
+		}
+	}
+
+	dioxideRows := [][]string{}
+	for i := dioxideFirstYear; i <= dioxideLastYear; i++ {
+		yearAsString := strconv.Itoa(i)
+		yearAverage := yearAverages[yearAsString]
+		yearValue := strconv.FormatFloat(yearAverage.Sum/float64(yearAverage.Divider), 'f', -1, 64)
+		for _, country := range countries {
+			dioxideRows = append(dioxideRows, []string{country, yearValue, yearAsString})
+		}
+	}
+
+	return model.WritableData{
+		Header: dioxideHeader,
+		Rows:   dioxideRows,
+	}, nil
+}
