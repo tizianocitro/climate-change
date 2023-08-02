@@ -5,8 +5,10 @@ import React, {
     useContext,
     useEffect,
 } from 'react';
-import {Select} from 'antd';
+import {Button, Select} from 'antd';
+import {ArrowLeftOutlined, ArrowRightOutlined} from '@ant-design/icons';
 import {useIntl} from 'react-intl';
+import styled from 'styled-components';
 
 import {IsRhsContext} from 'src/components/backstage/sections_widgets/sections_widgets_container';
 import {Point, PointData} from 'src/types/map';
@@ -64,21 +66,67 @@ const PointSelect: FC<Props> = ({
         return (option?.label ?? '').includes(input);
     };
 
+    const setNextPointAsSelected = () => {
+        if (!selectedPoint || !selectedPoint.value) {
+            return;
+        }
+        const value = `${parseInt(selectedPoint.value, 10) + 1}`;
+        setSelectedPoint({value, label: value});
+    };
+
+    const setPreviousPointAsSelected = () => {
+        if (!selectedPoint || !selectedPoint.value) {
+            return;
+        }
+        const value = `${parseInt(selectedPoint.value, 10) - 1}`;
+        setSelectedPoint({value, label: value});
+    };
+
+    const isButtonDisabled = (isPrev: boolean): boolean => {
+        if (!selectedPoint || !selectedPoint.value || points.length < 1) {
+            return true;
+        }
+        if (isPrev) {
+            return selectedPoint.value === points[0].value;
+        }
+        return selectedPoint.value === points[points.length - 1].value;
+    };
+
     const {points} = data;
     const width = isRhs ? 125 : 200;
     return (
-        <Select
-            value={selectedPoint.value}
-            showSearch={true}
-            style={{width}}
-            placeholder={formatMessage({defaultMessage: 'Search or select a year'})}
-            optionFilterProp='children'
-            filterOption={filterOption}
-            filterSort={filterSort}
-            options={points}
-            onChange={(value) => setSelectedPoint({value, label: value})}
-        />
+        <Container>
+            <Button
+                style={{marginRight: '1%'}}
+                key='prev'
+                onClick={setPreviousPointAsSelected}
+                disabled={isButtonDisabled(true)}
+                icon={<ArrowLeftOutlined/>}
+            />
+            <Select
+                value={selectedPoint.value}
+                showSearch={true}
+                style={{width}}
+                placeholder={formatMessage({defaultMessage: 'Search or select a year'})}
+                optionFilterProp='children'
+                filterOption={filterOption}
+                filterSort={filterSort}
+                options={points}
+                onChange={(value) => setSelectedPoint({value, label: value})}
+            />
+            <Button
+                style={{marginLeft: '1%'}}
+                key='next'
+                onClick={setNextPointAsSelected}
+                disabled={isButtonDisabled(false)}
+                icon={<ArrowRightOutlined/>}
+            />
+        </Container>
     );
 };
+
+const Container = styled.div`
+    display: flex;
+`;
 
 export default PointSelect;
