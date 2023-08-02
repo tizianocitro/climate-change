@@ -40,6 +40,7 @@ import {
 } from 'src/types/map';
 
 import Features from './features.json';
+import Legend, {LegendData} from './legend';
 
 type Props = {
     countries?: Country[];
@@ -103,6 +104,39 @@ const getContriesColor = (seaEnv: SeaEnv | undefined): string => {
     return seaEnv?.countriesColor ? seaEnv?.countriesColor : defaultCountriesColor;
 };
 
+const getLegendData = (
+    range: number[] | undefined,
+    colorRange: string[] | undefined,
+    worldEnv: WorldEnv | undefined,
+    seaEnv: SeaEnv | undefined,
+): LegendData | null => {
+    if (range && colorRange) {
+        return {
+            minValue: range[0],
+            maxValue: range[1],
+            minColor: colorRange[0],
+            maxColor: colorRange[1],
+        };
+    }
+    if (worldEnv) {
+        return {
+            minValue: worldEnv.range[0],
+            maxValue: worldEnv.range[1],
+            minColor: worldEnv.colorRange[0],
+            maxColor: worldEnv.colorRange[1],
+        };
+    }
+    if (seaEnv) {
+        return {
+            minValue: seaEnv.range[0],
+            maxValue: seaEnv.range[1],
+            minColor: seaEnv.colorRange[0],
+            maxColor: seaEnv.colorRange[1],
+        };
+    }
+    return null;
+};
+
 const WorldMap: FC<Props> = ({
     countries,
     range,
@@ -145,6 +179,8 @@ const WorldMap: FC<Props> = ({
     const isWorldEnv = isWorldEnvDefined(worldEnv);
     const isSeaEnv = isSeaEnvDefined(seaEnv);
     const isCountriesEnv = !isWorldEnv && !isSeaEnv;
+
+    const legendData = getLegendData(range, colorRange, worldEnv, seaEnv);
 
     const getSeaTooltipContent = (): string => {
         if (!seaEnv) {
@@ -266,6 +302,13 @@ const WorldMap: FC<Props> = ({
             // setGeoMap((prev: any) => ({...prev, [countryIso3]: mapCountry}));
             geoMap[countryIso3] = mapCountry;
         }
+
+        // Updates the value but keeps coordinates and other properties in cache
+        // const countryForValue = data.find((country) => country.iso3 === countryIso3);
+        // if (!countryForValue) {
+        //     return;
+        // }
+        // setSelectedCountry({...mapCountry, value: countryForValue.value});
         setSelectedCountry(mapCountry);
 
         // Adding urlHash as dependency helps a lot with performances when there is an ecosystem, but prevents hyperlinking to work in dashboard
@@ -356,12 +399,15 @@ const WorldMap: FC<Props> = ({
                                 alignmentBaseline='middle'
                                 style={{fill: '#000000'}}
                             >
+                                {/* {`${selectedCountry.name}: ${isSeaEnv ? seaEnv?.value : selectedCountry.value}`} */}
                                 {selectedCountry.name}
                             </text>
                         </Annotation>
                     }
                 </ZoomableGroup>
             </ComposableMap>
+
+            {legendData && <Legend data={legendData}/>}
 
             <ReactTooltip id='geo-tooltip'/>
             <ReactTooltip id='sea-tooltip'/>
