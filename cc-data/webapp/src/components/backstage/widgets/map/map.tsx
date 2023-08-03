@@ -9,6 +9,7 @@ import styled from 'styled-components';
 
 import {AnchorLinkTitle, Header} from 'src/components/backstage/widgets/shared';
 import {IsEcosystemRhsContext} from 'src/components/rhs/rhs_widgets';
+import {IsRhsContext} from 'src/components/backstage/sections_widgets/sections_widgets_container';
 import {FullUrlContext} from 'src/components/rhs/rhs';
 import {buildQuery, useScrollIntoView, useUrlHash} from 'src/hooks';
 import {formatName} from 'src/helpers';
@@ -36,6 +37,7 @@ const Map = ({
     setPoint,
 }: Props) => {
     const isEcosystemRhs = useContext(IsEcosystemRhsContext);
+    const isRhs = useContext(IsRhsContext);
     const fullUrl = useContext(FullUrlContext);
     const urlHash = useUrlHash();
 
@@ -52,7 +54,7 @@ const Map = ({
     const id = `${formatName(name)}-${sectionId}-${parentId}-widget`;
     const ecosystemQuery = isEcosystemRhs ? '' : buildQuery(parentId, sectionId);
 
-    useScrollIntoView(getUrlHashForWorldMap(urlHash));
+    useScrollIntoView(getUrlHashForWorldMap(urlHash, sectionId, isRhs));
 
     return (
         <Container
