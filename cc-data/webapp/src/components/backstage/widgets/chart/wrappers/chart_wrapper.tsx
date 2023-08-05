@@ -12,12 +12,14 @@ type Props = {
     name?: string;
     url?: string;
     chartType?: ChartType;
+    index?: number;
 };
 
 const ChartWrapper = ({
     name = '',
     url = '',
     chartType,
+    index = 1,
 }: Props) => {
     const sectionContextOptions = useContext(SectionContext);
     const {params: {sectionId}} = useRouteMatch<{sectionId: string}>();
@@ -95,6 +97,7 @@ const ChartWrapper = ({
             chartType={chartType}
             parentId={parentId}
             sectionId={sectionIdForUrl}
+            delay={index + 1}
         />
     );
 };
