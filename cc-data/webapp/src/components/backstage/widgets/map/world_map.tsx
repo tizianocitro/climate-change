@@ -17,6 +17,7 @@ import {
 import {useRouteMatch} from 'react-router-dom';
 import {scaleLinear} from 'd3-scale';
 import {Tooltip as ReactTooltip} from 'react-tooltip';
+import {max, min} from 'lodash';
 
 import {
     buildQuery,
@@ -175,6 +176,20 @@ const getLegendData = (
         };
     }
     return null;
+};
+
+const getRectWidth = (name: string | undefined, value: string | number | undefined): string => {
+    const nameWidth = !name || name.length <= 14 ? 100 : 200;
+    const valueWidth = !value || `${value}`.length <= 14 ? 100 : 200;
+    const width = max([nameWidth, valueWidth]);
+    return `${width}`;
+};
+
+const getRectX = (name: string | undefined, value: string | number | undefined): string => {
+    const nameX = !name || name.length <= 14 ? -50 : -100;
+    const valueX = !value || `${value}`.length <= 14 ? -50 : -100;
+    const x = min([nameX, valueX]);
+    return `${x}`;
 };
 
 const WorldMap: FC<Props> = ({
@@ -420,9 +435,9 @@ const WorldMap: FC<Props> = ({
                             }}
                         >
                             <rect
-                                x={!selectedCountry.name || selectedCountry.name.length <= 14 ? '-50' : '-100'}
+                                x={getRectX(selectedCountry.name, selectedCountry.value)}
                                 y='-11'
-                                width={!selectedCountry.name || selectedCountry.name.length <= 14 ? '100' : '200'}
+                                width={getRectWidth(selectedCountry.name, selectedCountry.value)}
                                 height='40'
                                 rx='5'
                                 ry='5'
@@ -439,7 +454,7 @@ const WorldMap: FC<Props> = ({
                                 {/* {`${selectedCountry.name}: ${isSeaEnv ? seaEnv?.value : selectedCountry.value}`} */}
                                 <tspan
                                     x='0'
-                                    dy='0'
+                                    dy='5'
                                 >
                                     {selectedCountry.name}
                                 </tspan>
