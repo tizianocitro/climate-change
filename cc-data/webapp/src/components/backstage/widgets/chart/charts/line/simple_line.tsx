@@ -38,6 +38,7 @@ type Props = {
     lineColor: LineColor;
     parentId: string;
     sectionId: string;
+    delay?: number;
 };
 
 const SimpleLineChart: FC<Props> = ({
@@ -45,6 +46,7 @@ const SimpleLineChart: FC<Props> = ({
     lineColor,
     parentId,
     sectionId,
+    delay = 1,
 }) => {
     const isRhs = useContext(IsRhsContext);
 
@@ -61,6 +63,9 @@ const SimpleLineChart: FC<Props> = ({
 
     useEffect(() => {
         if (!urlHash.includes(idStringify(sectionId))) {
+            return;
+        }
+        if (!urlHash.startsWith('#dot-')) {
             return;
         }
         const [label, value] = urlHash.substring(5).replaceAll('dot', '.').split('-');
@@ -118,6 +123,7 @@ const SimpleLineChart: FC<Props> = ({
                                         originalColor={lineColor[key]}
                                         selectedDot={selectedDot}
                                         sectionId={sectionId}
+                                        delay={delay}
                                     />}
                                 activeDot={
                                     <ClickableDot
