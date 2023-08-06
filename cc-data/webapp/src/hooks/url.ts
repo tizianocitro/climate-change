@@ -2,10 +2,13 @@ import {getSiteUrl} from 'src/clients';
 import {PARENT_ID_PARAM, SECTION_ID_PARAM} from 'src/constants';
 
 export const isUrlHashValid = (urlHash: string, all: string[], some: string[]): boolean => {
-    let valid = false;
     if (!urlHash || urlHash.length < 1) {
-        return valid;
+        return false;
     }
+    if (all.length < 1 && some.length < 1) {
+        return true;
+    }
+    let valid = false;
     if (all.length > 0) {
         valid = all.every((a) => urlHash.includes(a));
     }
