@@ -18,6 +18,7 @@ type Props = {
     chartType: ChartType;
     parentId: string;
     sectionId: string;
+    delay?: number;
 };
 
 const buildChartByType = (
@@ -25,6 +26,7 @@ const buildChartByType = (
     chartType: ChartType,
     parentId: string,
     sectionId: string,
+    delay: number,
 ): JSX.Element => {
     switch (chartType) {
     case ChartType.SimpleLine:
@@ -39,6 +41,7 @@ const buildChartByType = (
                 lineColor={lineColor}
                 parentId={parentId}
                 sectionId={sectionId}
+                delay={delay}
             />);
     case ChartType.NoChart:
     default:
@@ -52,6 +55,7 @@ const Chart = ({
     chartType,
     parentId,
     sectionId,
+    delay = 1,
 }: Props) => {
     const isEcosystemRhs = useContext(IsEcosystemRhsContext);
     const isRhs = useContext(IsRhsContext);
@@ -104,7 +108,7 @@ const Chart = ({
                     title={name}
                 />
             </Header>
-            {data && buildChartByType(data, chartType, parentId, sectionId)}
+            {data && buildChartByType(data, chartType, parentId, sectionId, delay)}
         </Container>
     );
 };

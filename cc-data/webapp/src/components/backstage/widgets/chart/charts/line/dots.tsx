@@ -44,10 +44,17 @@ const isDotSelected = (selectedDot: LineDot, label: string, value: number): bool
     return selectedDot.label === label && valueStringify(selectedDot.value) === valueStringify(value);
 };
 
+const getMsWithDelay = (delay: number, isEcosystemRhs: boolean): number => {
+    if (delay < 2) {
+        return isEcosystemRhs ? 1000 : 500;
+    }
+    return isEcosystemRhs ? delay * 600 : delay * 350;
+};
+
 type Props = any;
 
 export const Dot: FC<Props> = (props) => {
-    const {cx, cy, payload, value, originalColor, selectedDot, sectionId} = props;
+    const {cx, cy, payload, value, originalColor, selectedDot, sectionId, delay} = props;
 
     const isEcosystemRhs = useContext(IsEcosystemRhsContext);
     const isRhsClosed = useContext(IsRhsClosedContext);
@@ -59,10 +66,14 @@ export const Dot: FC<Props> = (props) => {
     useEffect(() => {
         setOpen(false);
 
-        // Time depends on the time needed for a scrool, in ecosystem rhs it needs more
-        const ms = isEcosystemRhs ? 1000 : 500;
-
+        // Time depends on the time needed for a scroll, in ecosystem rhs it needs more
+        const ms = getMsWithDelay(delay, isEcosystemRhs);
         const urlHashTimeout = setTimeout(() => {
+            if (!urlHash.startsWith('#dot-')) {
+                setOpen(false);
+                setColor(originalColor);
+                return;
+            }
             const isSelected = isDotSelected(selectedDot, payload.label, value);
             setOpen(isSelected);
             setColor(isSelected ? '#F4B400' : originalColor);

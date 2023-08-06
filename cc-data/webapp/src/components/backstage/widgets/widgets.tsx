@@ -24,7 +24,7 @@ const buildWidgetByType = (
     index: number,
 ): JSX.Element => {
     const key = `${name}-${type}-${index}`;
-    const props = {key, name, url, chartType};
+    const props = {key, name, url, chartType, index};
 
     switch (type) {
     case WidgetType.Chart:
