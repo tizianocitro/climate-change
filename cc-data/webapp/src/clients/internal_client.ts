@@ -17,7 +17,7 @@ import {
 
 import {PlatformConfig} from 'src/types/organization';
 import {pluginId} from 'src/manifest';
-import {UserAddedParams} from 'src/types/events';
+import {UrlHashTelemetryParams, UserAddedParams} from 'src/types/events';
 import {UserResult} from 'src/types/users';
 
 // import {getCachedResponse, putCacheResponse} from './cache';
@@ -105,6 +105,13 @@ export const addChannel = async (params: AddChannelParams): Promise<AddChannelRe
 export const userAdded = async (params: UserAddedParams): Promise<void> => {
     await doPost(
         `${apiUrl}/events/user_added`,
+        JSON.stringify(params),
+    );
+};
+
+export const saveUrlHashTelemetry = async (params: UrlHashTelemetryParams): Promise<void> => {
+    await doPost(
+        `${apiUrl}/events/url_hash_telemetry`,
         JSON.stringify(params),
     );
 };
