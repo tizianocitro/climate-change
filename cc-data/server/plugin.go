@@ -64,10 +64,11 @@ func (p *Plugin) OnActivate() error {
 		return errors.Wrapf(err, "failed creating the SQL store")
 	}
 	channelStore := sqlstore.NewChannelStore(apiClient, sqlStore)
+	eventStore := sqlstore.NewEventStore(apiClient, sqlStore)
 
 	p.platformService = config.NewPlatformService(p.API, configFileName, defaultConfigFileName)
 	p.channelService = app.NewChannelService(p.API, channelStore)
-	p.eventService = app.NewEventService(p.API)
+	p.eventService = app.NewEventService(p.API, eventStore)
 	p.userService = app.NewUserService(p.API)
 
 	mutex, err := cluster.NewMutex(p.API, "CSA_dbMutex")
