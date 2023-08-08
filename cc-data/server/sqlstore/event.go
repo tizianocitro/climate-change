@@ -1,11 +1,7 @@
-package app
+package sqlstore
 
-type UserAddedParams struct {
-	TeamID string `json:"teamId"`
-	UserID string `json:"userId"`
-}
-
-type URLHashTelemetryParams struct {
+type URLHashTelemetryEntity struct {
+	ID          string `json:"id"`
 	ChannelID   string `json:"channelId"`
 	ChannelName string `json:"channelName"`
 	TeamID      string `json:"teamId"`
