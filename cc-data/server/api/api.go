@@ -2,13 +2,15 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 
-	"github.com/gorilla/mux"
-
 	pluginapi "github.com/mattermost/mattermost-plugin-api"
+
+	"github.com/tizianocitro/climate-change/cc-data/server/app"
 )
 
 const MaxRequestSize = 5 * 1024 * 1024 // 5MB
@@ -59,6 +61,17 @@ func ReturnJSON(w http.ResponseWriter, pointerToObject interface{}, httpStatus i
 		logrus.WithError(err).Warn("Unable to write to http.ResponseWriter")
 		return
 	}
+}
+
+func ReturnAttachment(
+	w http.ResponseWriter,
+	data app.WritableData,
+	contentType, filename string,
+	writeAttachment func(w http.ResponseWriter, data app.WritableData),
+) {
+	w.Header().Set("Content-Type", contentType)
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment;filename=%s", filename))
+	writeAttachment(w, data)
 }
 
 // HandleErrorWithCode logs the internal error and sends the public facing error
