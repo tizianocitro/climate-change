@@ -15,6 +15,7 @@ type Migration struct {
 
 const MySQLCharset = "DEFAULT CHARACTER SET utf8mb4"
 
+// TODO: rename all CSA to CC
 var migrations = []Migration{
 	{
 		fromVersion: semver.MustParse("0.0.0"),
@@ -59,7 +60,6 @@ var migrations = []Migration{
 					return errors.Wrapf(err, "failed creating table CSA_Channel")
 				}
 			}
-
 			return nil
 		},
 	},
@@ -78,6 +78,44 @@ var migrations = []Migration{
 			if e.DriverName() == model.DatabaseDriverMysql {
 				if _, err := e.Exec(`ALTER TABLE CSA_System CONVERT TO CHARACTER SET utf8mb4`); err != nil {
 					return errors.Wrapf(err, "failed to migrate character set")
+				}
+			}
+			return nil
+		},
+	},
+	{
+		fromVersion: semver.MustParse("0.3.0"),
+		toVersion:   semver.MustParse("0.4.0"),
+		migrationFunc: func(e sqlx.Ext, sqlStore *SQLStore) error {
+			if e.DriverName() == model.DatabaseDriverMysql {
+				if _, err := e.Exec(`
+					CREATE TABLE IF NOT EXISTS CSA_URL_HASH_TELEMETRY (
+						ID TEXT PRIMARY KEY,
+						ChannelID TEXT,
+						ChannelName TEXT,
+						TeamID TEXT,
+						TeamName TEXT,
+						UserID TEXT,
+						Username TEXT,
+						URLHash TEXT
+					)
+				` + MySQLCharset); err != nil {
+					return errors.Wrapf(err, "failed creating table CSA_URL_HASH_TELEMETRY")
+				}
+			} else {
+				if _, err := e.Exec(`
+					CREATE TABLE IF NOT EXISTS CSA_URL_HASH_TELEMETRY (
+						ID TEXT PRIMARY KEY,
+						ChannelID TEXT,
+						ChannelName TEXT,
+						TeamID TEXT,
+						TeamName TEXT,
+						UserID TEXT,
+						Username TEXT,
+						URLHash TEXT
+					);
+				`); err != nil {
+					return errors.Wrapf(err, "failed creating table CSA_URL_HASH_TELEMETRY")
 				}
 			}
 			return nil
