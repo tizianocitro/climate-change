@@ -13,6 +13,14 @@ services:
       - "./config/config/config.json:/mattermost/config/config.json"
     ports:
       - "8065:8065"
+    environment:
+      MM_SQLSETTINGS_DRIVERNAME: "postgres"
+      MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mostest@db/mattermost_test?sslmode=disable\u0026connect_timeout=10&binary_parameters=yes"
+      MM_SERVICESETTINGS_ENABLEBOTACCOUNTCREATION: "true"
+      MM_SERVICESETTINGS_ENABLEDEVELOPER: "true"
+      MM_SERVICESETTINGS_ENABLETESTING: "true"
+      MM_PLUGINSETTINGS_ENABLEUPLOADS: "true"
+      MM_SERVICESETTINGS_SITEURL: "http://www.isislab.it:8065"
     networks:
       - mattermost
   db:
