@@ -17,8 +17,8 @@ services:
       MM_SQLSETTINGS_DRIVERNAME: "postgres"
       MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mostest@db/mattermost_test?sslmode=disable\u0026connect_timeout=10&binary_parameters=yes"
       MM_SERVICESETTINGS_ENABLEBOTACCOUNTCREATION: "true"
-      MM_SERVICESETTINGS_ENABLEDEVELOPER: "false"
-      MM_SERVICESETTINGS_ENABLETESTING: "false"
+      MM_SERVICESETTINGS_ENABLEDEVELOPER: "true"
+      MM_SERVICESETTINGS_ENABLETESTING: "true"
       MM_PLUGINSETTINGS_ENABLEUPLOADS: "true"
       MM_SERVICESETTINGS_SITEURL: "http://www.isislab.it:8065"
     networks:
@@ -35,7 +35,7 @@ services:
     volumes:
       - "postgres:/data/postgres"
     ports:
-      - "5432:5432"
+      - "5431:5432"
     networks:
       mattermost:
         ipv4_address: 10.5.0.5

@@ -19,11 +19,11 @@ done
 shift "$((OPTIND - 1))"
 
 echo "Stopping containers if running."
-docker compose down
+docker compose -f test.docker-compose.yml down
 echo "Containers stopped."
 
 echo "Starting containers..."
-docker compose up -d
+docker compose -f test.docker-compose.yml up -d
 echo "Containers started."
 
 if [ "$PRUNE_VOLUMES" = true ]; then

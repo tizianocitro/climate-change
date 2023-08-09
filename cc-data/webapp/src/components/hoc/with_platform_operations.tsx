@@ -4,14 +4,14 @@ import {useSelector} from 'react-redux';
 import {getCurrentTeamId} from 'mattermost-webapp/packages/mattermost-redux/src/selectors/entities/teams';
 import {getCurrentChannelId} from 'mattermost-webapp/packages/mattermost-redux/src/selectors/entities/common';
 
-// import {useSuggestions, useUserAdded} from 'src/hooks';
-import {useHideOptions, useSuggestions, useUserAdded} from 'src/hooks';
+// import {useHideOptions, useSuggestions, useUserAdded} from 'src/hooks';
+import {useSuggestions, useUserAdded} from 'src/hooks';
 import Suggestions from 'src/components/chat/suggestions';
 import {channelNameSelector, teamNameSelector} from 'src/selectors';
 
 const withPlatformOperations = (Component: ComponentType): (props: any) => JSX.Element => {
     return (props: any): JSX.Element => {
-        useHideOptions();
+        // useHideOptions();
         useUserAdded();
         const [suggestions, isVisible, setIsVisible] = useSuggestions();
 
