@@ -2,6 +2,23 @@
 
 PLUGIN_NAME=climate-change-data
 CONTAINER_NAME=cs-connect-base
+PRUNE_VOLUMES=false
+
+# Parse the command-line options
+while getopts "p" opt; do
+    case $opt in
+        p)
+            PRUNE_VOLUMES=true
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG"
+            exit 1
+            ;;
+    esac
+done
+
+# Shift the parsed options, so $1 will point to the first non-option argument (if any).
+shift "$((OPTIND - 1))"
 
 echo "Stopping containers if running..."
 docker compose -f dev.docker-compose.yml down
@@ -29,6 +46,8 @@ echo "Starting containers..."
 docker compose -f dev.docker-compose.yml up -d
 echo "Containers started."
 
-echo "Cleaning up older volumes..."
-docker volume prune -f
-echo "Completed."
+if [ "$PRUNE_VOLUMES" = true ]; then
+    echo "Cleaning up older volumes..."
+    docker volume prune -f
+    echo "Completed."
+fi
