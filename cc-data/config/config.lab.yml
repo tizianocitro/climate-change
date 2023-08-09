@@ -7,7 +7,7 @@ organizations:
     sections:
       - name: Ecosystem Issues
         id: "0"
-        url: http://www.isislab.it:3000/cc-data-provider/issues
+        url: https://meet.isislab.it:3000/cc-data-provider/issues
         widgets:
           - type: channels
   - name: IMF Climate Data
@@ -16,40 +16,40 @@ organizations:
     sections:
       - name: Surface Temperature Change
         id: "10"
-        url: http://www.isislab.it:3000/cc-data-provider/organizations/1/temperatures
+        url: https://meet.isislab.it:3000/cc-data-provider/organizations/1/temperatures
         widgets:
           - name: Description
             type: text-box
-            url: http://www.isislab.it:3000/cc-data-provider/organizations/1/temperatures/:id/desc
+            url: https://meet.isislab.it:3000/cc-data-provider/organizations/1/temperatures/:id/desc
           - name: Temperature Change
             type: map
-            url: http://www.isislab.it:3000/cc-data-provider/organizations/1/temperatures/:id/map?year=:year
+            url: https://meet.isislab.it:3000/cc-data-provider/organizations/1/temperatures/:id/map?year=:year
           - type: channels
       - name: Atmospheric Carbon Dioxide Concentrations
         id: "11"
-        url: http://www.isislab.it:3000/cc-data-provider/organizations/1/dioxide
+        url: https://meet.isislab.it:3000/cc-data-provider/organizations/1/dioxide
         widgets:
           - name: Description
             type: text-box
-            url: http://www.isislab.it:3000/cc-data-provider/organizations/1/dioxide/:id/desc
+            url: https://meet.isislab.it:3000/cc-data-provider/organizations/1/dioxide/:id/desc
           - name: Dioxide Concentrations
             type: map
-            url: http://www.isislab.it:3000/cc-data-provider/organizations/1/dioxide/:id/map?year=:year
+            url: https://meet.isislab.it:3000/cc-data-provider/organizations/1/dioxide/:id/map?year=:year
           - name: Dioxide Concentrations Chart
             type: chart
             chartType: simple-line
-            url: http://www.isislab.it:3000/cc-data-provider/organizations/1/dioxide/:id/chart
+            url: https://meet.isislab.it:3000/cc-data-provider/organizations/1/dioxide/:id/chart
           - type: channels
       - name: Change In Mean Sea Levels
         id: "12"
-        url: http://www.isislab.it:3000/cc-data-provider/organizations/1/seas
+        url: https://meet.isislab.it:3000/cc-data-provider/organizations/1/seas
         widgets:
           - name: Description
             type: text-box
-            url: http://www.isislab.it:3000/cc-data-provider/organizations/1/seas/:id/desc
+            url: https://meet.isislab.it:3000/cc-data-provider/organizations/1/seas/:id/desc
           - name: Sea Levels Change
             type: map
-            url: http://www.isislab.it:3000/cc-data-provider/organizations/1/seas/:id/map?year=:year
+            url: https://meet.isislab.it:3000/cc-data-provider/organizations/1/seas/:id/map?year=:year
           - type: channels
   - name: Data World
     id: "2"
@@ -57,13 +57,13 @@ organizations:
     sections:
       - name: Surface Temperature Change
         id: "13"
-        url: http://www.isislab.it:3000/cc-data-provider/organizations/2/temperatures
+        url: https://meet.isislab.it:3000/cc-data-provider/organizations/2/temperatures
         widgets:
           - name: Description
             type: text-box
-            url: http://www.isislab.it:3000/cc-data-provider/organizations/2/temperatures/:id/desc
+            url: https://meet.isislab.it:3000/cc-data-provider/organizations/2/temperatures/:id/desc
           - name: Temperature Change
             type: chart
             chartType: simple-line
-            url: http://www.isislab.it:3000/cc-data-provider/organizations/2/temperatures/:id/chart
+            url: https://meet.isislab.it:3000/cc-data-provider/organizations/2/temperatures/:id/chart
           - type: channels
