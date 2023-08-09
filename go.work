@@ -1,0 +1,7 @@
+go 1.18
+
+use (
+	./cc-data
+	./cc-data-cleaner
+	./cc-data-provider
+)
