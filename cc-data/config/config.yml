@@ -35,6 +35,10 @@ organizations:
           - name: Dioxide Concentrations
             type: map
             url: http://www.isislab.it:3000/cc-data-provider/organizations/1/dioxide/:id/map?year=:year
+          - name: Dioxide Concentrations Chart
+            type: chart
+            chartType: simple-line
+            url: http://www.isislab.it:3000/cc-data-provider/organizations/1/dioxide/:id/chart
           - type: channels
       - name: Change In Mean Sea Levels
         id: "12"
