@@ -1,8 +1,8 @@
 version: "3.9"
 services:
   mattermost:
-    container_name: "mattermost"
-    image: "ccdata/mattermost"
+    container_name: "ccdata"
+    image: "ccdata/mattermost:0.1"
     restart: "unless-stopped"
     depends_on:
       - "db"
