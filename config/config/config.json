@@ -558,10 +558,13 @@
                 "udpserverport": 8443
             },
             "playbooks": {
-                "BotUserID": "gz5zm8ajbprcjdwyyqnj8ko34a"
+                "BotUserID": "69wfbw3zgpgjdb8xp3sap66p4y"
             }
         },
         "PluginStates": {
+            "climate-change-data": {
+                "Enable": true
+            },
             "com.mattermost.apps": {
                 "Enable": true
             },
@@ -572,9 +575,6 @@
                 "Enable": true
             },
             "com.mattermost.plugin-channel-export": {
-                "Enable": true
-            },
-            "cs-aware-connect": {
                 "Enable": true
             },
             "focalboard": {
