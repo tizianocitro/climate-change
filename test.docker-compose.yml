@@ -2,7 +2,7 @@ version: "3.9"
 services:
   mattermost:
     container_name: "ccdata"
-    image: "ccdata/mattermost:0.1"
+    image: "ccdata/mattermost:0.1" # 0.1 has edit permissions, 0.2 disables them
     restart: "unless-stopped"
     depends_on:
       - "db"
@@ -11,8 +11,6 @@ services:
       - "./config/logs:/mattermost/logs:rw"
       - "./config/plugins:/mattermost/plugins:rw"
       - "./config/config/config.json:/mattermost/config/config.json"
-    ports:
-      - "8065:8065"
     environment:
       MM_SQLSETTINGS_DRIVERNAME: "postgres"
       MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mostest@db/mattermost_test?sslmode=disable\u0026connect_timeout=10&binary_parameters=yes"
@@ -20,7 +18,7 @@ services:
       MM_SERVICESETTINGS_ENABLEDEVELOPER: "true"
       MM_SERVICESETTINGS_ENABLETESTING: "true"
       MM_PLUGINSETTINGS_ENABLEUPLOADS: "true"
-      MM_SERVICESETTINGS_SITEURL: "http://www.isislab.it:8065"
+      MM_SERVICESETTINGS_SITEURL: "https://meet.isislab.it:8066"
     networks:
       - mattermost
   db:
@@ -34,11 +32,8 @@ services:
       PGDATA: "/data/postgres"
     volumes:
       - "postgres:/data/postgres"
-    ports:
-      - "5431:5432"
     networks:
-      mattermost:
-        ipv4_address: 10.5.0.5
+      - mattermost
   pgadmin:
     container_name: "pgadmin"
     image: "dpage/pgadmin4"
@@ -70,8 +65,4 @@ volumes:
   pgadmin:
 networks:
   mattermost:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.5.0.0/16
-          gateway: 10.5.0.1
+    external: true
