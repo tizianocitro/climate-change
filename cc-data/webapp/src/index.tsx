@@ -4,23 +4,16 @@ import React from 'react';
 import {Store} from 'redux';
 import {render} from 'react-dom';
 
-import {
-    DEFAULT_PATH,
-    DOCUMENTATION_PATH,
-    PRODUCT_DOCUMENTATION,
-    PRODUCT_ICON,
-    PRODUCT_NAME,
-} from 'src/constants';
+import {DEFAULT_PATH, PRODUCT_ICON, PRODUCT_NAME} from 'src/constants';
 import {DEFAULT_PLATFORM_CONFIG_PATH, setPlatformConfig} from 'src/config/config';
 import {loadPlatformConfig, setSiteUrl} from 'src/clients';
 import Backstage from 'src/components/backstage/backstage';
-import {HiddenIcon, InfoIcon, RHSIcon} from 'src/components/icons';
+import {HiddenIcon, RHSIcon} from 'src/components/icons';
 import {GlobalSelectStyle} from 'src/components/backstage/styles';
 import RHSView from 'src/components/rhs/rhs';
 import {pluginId} from 'src/manifest';
 
 import {messageWillBePosted, messageWillBeUpdated, slashCommandWillBePosted} from './hooks';
-import {navigateToPluginUrl} from './browser_routing';
 import withPlatformOperations from './components/hoc/with_platform_operations';
 
 type WindowObject = {
@@ -101,12 +94,12 @@ export default class Plugin {
             PRODUCT_NAME,
         );
 
-        registry.registerChannelHeaderButtonAction(
-            <InfoIcon/>,
-            () => navigateToPluginUrl(`/${DOCUMENTATION_PATH}`),
-            PRODUCT_DOCUMENTATION,
-            PRODUCT_DOCUMENTATION,
-        );
+        // registry.registerChannelHeaderButtonAction(
+        //     <InfoIcon/>,
+        //     () => navigateToPluginUrl(`/${DOCUMENTATION_PATH}`),
+        //     PRODUCT_DOCUMENTATION,
+        //     PRODUCT_DOCUMENTATION,
+        // );
 
         registry.registerChannelHeaderButtonAction(withPlatformOperations(HiddenIcon), () => null, '', '');
 
