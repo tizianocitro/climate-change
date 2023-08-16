@@ -18,3 +18,24 @@ export const LoadingIcon = (
         spin={true}
     />
 );
+
+// type Props = {
+//     id: string;
+//     style?: any;
+// };
+
+// export const FingerPointingIcon: FC<Props> = ({id, style}) => {
+//     const color = '#F4B400';
+//     return (
+//         <FiArrowUp
+//             id={id}
+//             size={24}
+//             style={style ? {
+//                 color,
+//                 ...style,
+//             } : {
+//                 color,
+//             }}
+//         />
+//     );
+// };
