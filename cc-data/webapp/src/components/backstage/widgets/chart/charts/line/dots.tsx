@@ -100,6 +100,8 @@ export const Dot: FC<Props> = (props) => {
     //     </>
     // )}
     // id={`tooltip-${payload.label}-${valueStringify(value)}-${idStringify(sectionId)}`}
+
+    // to put on separated lines: title={<div>{`${payload.label}`}<br/>{`${value}`}</div>}
     return (
         <Tooltip
             title={`${payload.label}: ${value}`}
