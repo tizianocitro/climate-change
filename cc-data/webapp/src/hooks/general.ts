@@ -123,6 +123,7 @@ export const useUserAdded = () => {
     const userId = useSelector(getCurrentUserId);
 
     useEffect(() => {
+        // TODO: clean this
         let isCanceled = false;
         async function userAddedAsync() {
             userAdded({teamId, userId});
