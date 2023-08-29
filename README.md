@@ -1,5 +1,7 @@
 # climate-change
+A collaboration platform based on Mattermost and Hyperlinking Object-Oriented Discussion to identify mis/disinformation in climate change discussions.
 
+# Components
 1. [cc-data]() which enables the object-oriented collaboration mechanism with support for the hyper-linking system.
 1. [cc-data-provider]() a web server that provides fake data using the RESTful protocol.
 
