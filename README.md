@@ -7,5 +7,5 @@ A collaboration platform based on Mattermost and Hyperlinking Object-Oriented Di
 3. [cc-data-cleaner](): a module for cleaning and manipulating data.
 
 # Installation
-- Build the previous packages using the instructions provided in the README.d files of each project.
-- Run the `start.sh` script to startup the platform.
+- Build the previous packages using the instructions provided in the README.md files of each project.
+- Run the `start.sh` script to start the platform.
