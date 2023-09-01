@@ -1,11 +1,5 @@
-# CS Data Provider
+# Climate Change Data Provider
+A server that provides data to the Climate Change collaboration platform.
 
-A server to provide mock data to the CS Connect collaboration platform.
-
-## How to build
-
-Use the build script to build the Docker image for the CS Data Provider.
-
-```sh
-$ sudo ./build.sh
-```
+## Build
+Launch the build.sh script to build the Docker image for the data provider.
