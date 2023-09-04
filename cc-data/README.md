@@ -1,16 +1,13 @@
-# CS Connect
+# Climate Change Data
+A plugin to enable HOOD within Mattermost.
 
-An hyperlinking collaboration platform for CS-AWARE platform.
+## Installation
+Build the Docker image for the plugin build environment using the following command.
 
-## How to build
-
-Build the Docker image for the environment for building the plugin.
+It is possible to change the base container name, but it will require updating the start script.
 
 ```sh
-$ sudo docker build -t cs-connect-base -f docker/dev.Dockerfile .
+docker build -t cs-connect-base -f docker/dev.Dockerfile .
 ```
 
-Build the custom Mattermost Docker image with the plugin installed.
-
-```sh
-$ sudo ./build.sh
+Launch the `build.sh` script to build the custom Mattermost Docker image with the plugin installed.
