@@ -2,7 +2,7 @@
 A collaboration platform based on Mattermost and Hyperlinked Object-Oriented Discussion (HOOD) to identify mis/disinformation in climate change discussions.
 
 # Components
-1. [cc-data](): enables the object-oriented collaboration mechanism with support for the hyperlinking system.
+1. [cc-data](https://github.com/tizianocitro/climate-change/tree/main/cc-data): enables the object-oriented collaboration mechanism with support for the hyperlinking system.
 2. [cc-data-provider](): a web server that provides data by exposing RESTful APIs.
 3. [cc-data-cleaner](): a module for cleaning and manipulating data.
 
