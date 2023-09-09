@@ -1,5 +1,5 @@
 # Climate Change
-A collaboration platform based on Mattermost and Hyperlinked Object-Oriented Discussion (HOOD) to identify mis/disinformation in climate change discussions.
+A collaboration platform based on Mattermost and Hyperlinked Object-Oriented Discussion (HOOD) to identify information disorder in climate change discussions.
 
 # Components
 1. [cc-data](): enables the object-oriented collaboration mechanism with support for the hyperlinking system.
