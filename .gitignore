@@ -7,6 +7,9 @@
 # Jetbrains
 .idea/
 
+# Pyhton
+.venv/
+
 docker/package/
 
 config/logs
