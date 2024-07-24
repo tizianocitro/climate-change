@@ -1,3 +1,3 @@
-# Statistical Analysis
+# Analysis
 
-Python modules developed on Google Colab for the statistical analysis of results.
+All Python scripts and notebooks developed on Google Colab and used for analyzing results of the experiment.
